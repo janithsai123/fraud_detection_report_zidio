@@ -44,7 +44,7 @@ class FraudPredictor:
             action = "Secondary Verification Recommended"
         else:
             risk_tier = "Low Risk"
-            risk_color = "#10B981"  # Emerald
+            risk_color = "#0F766E"  # Accent Teal (Positive Indicator)
             action = "Approve Standard Processing"
         
         # Identify domain heuristic risk factors

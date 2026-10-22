@@ -146,14 +146,14 @@ st.markdown("""
     .app-logo-tile {
         width: 42px;
         height: 42px;
-        background: #EBF2FE;
-        border: 1px solid #BFDBFE;
+        background: #F0FDFA;
+        border: 1px solid #CCFBF1;
         border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 20px;
-        color: #1E3A5F;
+        color: #0F766E;
         font-weight: 800;
     }
     .app-title-box h1 {
@@ -268,9 +268,9 @@ st.markdown("""
         border-radius: 3px;
         font-weight: 600;
         font-size: 10px;
-        background: #EBF2FE;
-        color: #1E3A5F;
-        border: 1px solid #BFDBFE;
+        background: #F0FDFA;
+        color: #0F766E;
+        border: 1px solid #CCFBF1;
     }
     
     /* Professional Light Sidebar */
@@ -342,10 +342,10 @@ st.markdown("""
     section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"],
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked),
     section[data-testid="stSidebar"] div[role="radiogroup"] > label[aria-checked="true"] {
-        background: #EBF2FE !important;
-        border: 1px solid #BFDBFE !important;
-        border-left: 5px solid #1E3A5F !important;
-        box-shadow: 0 1px 3px rgba(30, 58, 95, 0.08) !important;
+        background: #F0FDFA !important;
+        border: 1px solid #CCFBF1 !important;
+        border-left: 5px solid #0F766E !important;
+        box-shadow: 0 1px 3px rgba(15, 118, 110, 0.10) !important;
     }
     section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] div[data-testid="stMarkdownContainer"] p,
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked) div[data-testid="stMarkdownContainer"] p,
@@ -354,7 +354,7 @@ st.markdown("""
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked) span,
     section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] p,
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked) p {
-        color: #1E3A5F !important;
+        color: #0F766E !important;
         font-weight: 700 !important;
     }
     
@@ -406,8 +406,8 @@ st.markdown("""
         border-bottom: 2px solid transparent !important;
     }
     div[data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
-        color: #1E3A5F !important;
-        border-bottom: 2px solid #1E3A5F !important;
+        color: #0F766E !important;
+        border-bottom: 2px solid #0F766E !important;
         font-weight: 700 !important;
     }
     
@@ -515,7 +515,7 @@ with st.sidebar:
     st.markdown("""
     <div style="padding: 8px 4px 14px 4px; border-bottom: 1px solid #E2E8F0;">
         <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 34px; height: 34px; background: #EBF2FE; border: 1px solid #BFDBFE; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #1E3A5F; font-weight: 800;">
+            <div style="width: 34px; height: 34px; background: #F0FDFA; border: 1px solid #CCFBF1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #0F766E; font-weight: 800;">
                 📊
             </div>
             <div>
@@ -1188,7 +1188,7 @@ elif selected_nav == "⚡ Transaction Scoring":
                 prob_pct = res['fraud_probability'] * 100.0
                 
                 card_border = res['risk_color']
-                card_bg = "#FEF2F2" if res['risk_tier'] == "High Risk" else ("#FFFBEB" if res['risk_tier'] == "Medium Risk" else "#F0FDF4")
+                card_bg = "#FEF2F2" if res['risk_tier'] == "High Risk" else ("#FFFBEB" if res['risk_tier'] == "Medium Risk" else "#F0FDFA")
                     
                 st.markdown(f"""
                 <div class='app-card-box' style='border: 2px solid {card_border}; background: {card_bg};'>
@@ -1239,7 +1239,7 @@ elif selected_nav == "⚡ Transaction Scoring":
                         <div class="risk-meter-fill" style="width: {prob_pct}%; background: {card_border};"></div>
                     </div>
                     <div style="display: flex; justify-content: space-between; font-size: 10px; color: #64748B; font-weight: 600;">
-                        <span style="color: #10B981;">LOW (&lt;40%)</span>
+                        <span style="color: #0F766E;">LOW (&lt;40%)</span>
                         <span style="color: #F59E0B;">MEDIUM (40-65%)</span>
                         <span style="color: #DC2626;">HIGH (&gt;65%)</span>
                     </div>
@@ -1388,7 +1388,7 @@ elif selected_nav == "📦 Batch Transaction Scoring":
                     color_discrete_map={
                         "High Risk": "#DC2626",
                         "Medium Risk": "#F59E0B",
-                        "Low Risk": "#10B981"
+                        "Low Risk": "#0F766E"
                     },
                     labels={"Risk_Tier": "Risk Tier", "count": "Count"}
                 )
