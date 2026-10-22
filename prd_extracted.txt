@@ -1,0 +1,1378 @@
+PRODUCT REQUIREMENTS DOCUMENT
+Financial Fraud Detection System with Interactive Dashboard
+A one-month internship project: end-to-end Machine Learning and Data Analytics prototype
+Item
+Detail
+Document type
+Product Requirements Document (implementation-ready)
+Version / status
+v1.0 – Draft for mentor review
+Project duration
+4 weeks (one-month internship)
+Primary interface
+Streamlit web application (Power BI dashboards used as design references only)
+Intended use
+Educational and analytical prototype. Not a production banking security system and not an autonomous fraud-blocking system.
+Date prepared
+October 2026
+Reading guide.
+ Throughout this document, statements are tagged where it matters: 
+[Verified]
+ = taken from the mentor-supplied material; 
+[Recommendation]
+ = a design decision proposed in this PRD; 
+[Assumption]
+ = something believed true but still to be confirmed during the Week 1 audit.
+No model results are reported here.
+ Every performance figure must come from experiments that are actually executed during the project.
+Contents
+1. Executive Summary
+2. Problem Statement
+3. Product Vision and Objectives
+4. Target Users and Use Cases
+5. Scope and Out-of-Scope Features
+6. Dataset Audit and Selection
+7. Functional Requirements
+8. Non-Functional Requirements
+9. ML Methodology and Evaluation Strategy
+10. Dashboard and User Experience Requirements
+11. System Architecture and Data Flow
+12. Data Storage and Model Management
+13. Testing and Acceptance Criteria
+14. Four-Week Implementation Plan
+15. Risks, Assumptions and Dependencies
+16. Deliverables
+17. Success Metrics
+18. Future Enhancements
+Appendix A. Recommended Project Structure
+Appendix B. Using the Reference Notebooks and Dashboards
+Appendix C. Glossary
+1. Executive Summary
+This PRD defines a Financial Fraud Detection System that a student can build in four weeks. The system loads a financial transaction dataset, validates and explores it, trains and compares supervised machine learning models, scores transactions with a fraud probability and risk category, and presents the findings in an interactive Streamlit dashboard. Users can also upload a compatible CSV file and receive predictions.
+The mentor supplied three distinct datasets, a set of reference notebooks and five Power BI dashboard archives. This PRD treats the three datasets as separate sources with different schemas, target columns, label definitions and fraud prevalence. The notebooks and dashboards are used as references for methods and visual design; they are not assumed to run, or to be complete, without modification.
+Key decisions in this PRD
+Primary dataset [Recommendation]:
+ synthetic_fraud_dataset1.csv (50,000 rows, 14 columns, target Fraud_Label), subject to a Week 1 audit gate. It offers the richest mix of numerical, categorical and temporal fields at a size that trains quickly on a laptop. Its roughly 32% fraud rate is unrealistically high and its data is synthetic, so results must not be presented as evidence of real-world effectiveness.
+Optional secondary experiment [Recommendation]:
+ credit_card_fraud_dataset.csv (100,000 rows, ~1% fraud) to show how the same pipeline behaves under realistic class imbalance.
+Models:
+ Logistic Regression (baseline), Decision Tree and Random Forest (comparison), with XGBoost (or another boosting model) and Isolation Forest as optional extras.
+Evaluation:
+ stratified held-out test set that keeps the original class distribution; resampling only inside training folds; threshold selected on validation data, never on the test set; metrics include precision, recall, F1, ROC-AUC, PR-AUC, confusion matrix and false-positive/false-negative counts.
+Interface:
+ a five-page Streamlit dashboard (Executive Overview, Transaction Analytics, Fraud Detection, Model Performance, Detailed Transaction Review) with SQLite for lightweight persistence.
+Out of scope for v1:
+ Kafka, Spark Streaming, e-mail alerts, real-time banking integration, adaptive retraining and deep learning. Real-time processing will not be claimed.
+Positioning.
+ This is a prototype for educational purposes. It estimates the likelihood that a transaction resembles fraud in the training data. It does not confirm fraud and must not be used to block, freeze or report real customers.
+2. Problem Statement
+Financial fraud causes direct monetary loss and erodes customer trust. Fraudulent transactions are normally a very small share of all transactions, so they are easy to overlook in manual review and hard for naive models to learn. Two kinds of error carry real cost:
+False negatives (missed fraud):
+ a fraudulent transaction is treated as legitimate, so the loss is realised.
+False positives (false alarms):
+ a legitimate transaction is flagged, causing customer friction and analyst workload.
+Analysts therefore need (a) a model that ranks transactions by risk, (b) a way to choose how aggressively to flag, and (c) a clear view of where and when suspicious activity concentrates. The mentor's stated objective is to 
+build a Machine Learning and Data Analytics system to identify suspicious transactions, analyse fraud patterns and present actionable insights through an interactive dashboard.
+A further problem for a learner is methodological: it is easy to produce misleadingly high scores through accuracy on imbalanced data, resampling before the train/test split, or features that leak the label. This PRD builds guardrails against those mistakes into the requirements.
+3. Product Vision and Objectives
+3.1 Vision
+An end-to-end, reproducible, honest fraud-analytics prototype: from raw CSV to validated data, from engineered features to a fitted model pipeline, from model scores to an interactive dashboard that an analyst can explore and a mentor can audit.
+3.2 Objectives
+ID
+Objective
+How it is measured
+O1
+Load and validate the selected transaction data
+Validation report passes; documented handling of every issue found
+O2
+Understand the data through EDA and data-quality analysis
+EDA notebook covering all FR-03 visuals using real columns only
+O3
+Engineer defensible features without leakage
+Leakage checklist completed and signed off in the audit document
+O4
+Train and compare suitable models, including a naive baseline
+≥ 3 modelling configurations compared in one results table
+O5
+Evaluate correctly for imbalanced classification
+Held-out, unresampled test set; PR-AUC and recall reported; threshold chosen on validation data
+O6
+Score new transactions (single and batch)
+Upload → predictions → download works with the saved pipeline
+O7
+Communicate insights through an interactive dashboard
+Five dashboard pages implemented and demonstrated
+O8
+Be reproducible and honest about limits
+Fresh clone reproduces results from README; limitations section present
+4. Target Users and Use Cases
+4.1 Users
+User
+Description
+Primary needs
+Fraud analyst (simulated)
+A person who reviews flagged transactions in a bank or payments team. In this project the role is played by the intern or demo audience.
+See flagged transactions, risk categories and scores; filter and export; understand fraud patterns
+Intern / data scientist
+The student building and maintaining the project.
+Clear step-by-step requirements, reproducible pipeline, tests
+Mentor / reviewer
+Evaluates technical quality and learning outcomes.
+Evidence of correct methodology, honest evaluation, clean code and documentation
+Business stakeholder (illustrative)
+A manager who wants summary KPIs.
+Executive overview of volumes, fraud rate and flagged value
+4.2 Use cases
+ID
+Use case
+Actor
+Outcome
+UC-01
+Explore historical transactions and fraud patterns
+Analyst, stakeholder
+Insights by time, type, location, merchant/payment category and amount
+UC-02
+Upload a CSV and score all rows
+Analyst
+Table of predicted class, probability, risk category; downloadable
+UC-03
+Review a single flagged transaction
+Analyst
+Attributes, score and supporting features shown, with a clear "estimate, not confirmed fraud" notice
+UC-04
+Compare models and understand trade-offs
+Mentor, intern
+Results table, curves, confusion matrix, threshold analysis
+UC-05
+Change the alert threshold and see impact
+Analyst, mentor
+Updated counts of flagged items, false positives and missed fraud (on validation data)
+UC-06
+Reproduce the project on a new machine
+Mentor
+Follow README; get the same metrics with the fixed seed
+5. Scope and Out-of-Scope Features
+5.1 In scope (v1)
+Dataset audit of all three supplied datasets and a documented selection decision.
+CSV ingestion, schema validation, cleaning, EDA.
+Feature engineering limited to what the selected data supports.
+Logistic Regression, Decision Tree, Random Forest; optional XGBoost and Isolation Forest.
+Imbalance handling (class weights; one resampling method if justified), correct evaluation, threshold selection.
+Saved fitted pipeline (Joblib) used identically in training and inference.
+Batch CSV prediction and single-record review in a Streamlit dashboard.
+Dashboard-based highlighting of high-risk transactions.
+Lightweight SQLite persistence (optional but recommended), automated tests, README, final report.
+5.2 Out of scope (v1)
+Item
+Reason
+Kafka, Spark Streaming, any real-time pipeline
+Not needed to meet the objective; adds infrastructure risk. No real-time claims will be made.
+E-mail / SMS alerting
+Optional future work; requires secret management and an SMTP setup.
+Real-time bank integration or automatic blocking
+This is an educational prototype.
+Adaptive / online retraining, model drift monitoring
+Requires production data flow; listed under future enhancements.
+Deep learning / autoencoders, graph analysis, large ensembles
+Not justified by the data or schedule; may be mentioned as future work.
+Merging the three datasets into one
+Schemas, targets and label definitions differ; no integration strategy exists.
+Power BI as the ML inference layer
+Power BI alone is not a deployable inference service; Power BI files are design references.
+User authentication, multi-tenant deployment
+Single-user local application.
+6. Dataset Audit and Selection
+This section compares the three supplied datasets before any modelling begins. The mentor-supplied facts are marked [Verified]. Items that depend on inspecting the actual files are marked [To verify in Week 1] and must be filled in by the audit notebook; they are deliberately not guessed here.
+6.1 Verified facts about each dataset
+Property
+Dataset A: credit_card_fraud_dataset.csv
+Dataset B: financial_fraud_detection_dataset(1).csv
+Dataset C: synthetic_fraud_dataset1.csv
+Rows [Verified]
+100,000
+5,000
+50,000
+Columns [Verified]
+7
+14
+14
+Target column [Verified]
+IsFraud
+Fraudulent
+Fraud_Label
+Observed fraud rate [Verified]
+≈ 1%
+≈ 9.64%
+≈ 32.13%
+Named columns [Verified]
+TransactionID, TransactionDate, Amount, MerchantID, TransactionType, Location, IsFraud
+Includes transaction amount, merchant category, payment method, device type, location, international-transaction indicator, previous transactions, average spending, account age, suspicious keyword, Fraudulent
+Includes transaction amount, account balance, transaction type, date, device type, location, merchant category, previous fraudulent activity, daily transaction count, card type, card age, Fraud_Label
+Provenance
+[To verify] – likely synthetic; origin unknown
+[To verify] – likely synthetic; origin unknown
+[To verify] – described as synthetic by its name; origin unknown
+Duplicate files.
+ The identical additional copy of the synthetic dataset and the duplicate cleaned notebooks are 
+not
+ separate datasets or independent implementations. Verify with a file hash (for example SHA-256) and keep only one copy in the project. For Datasets B and C, only the descriptive column names above come from the brief; the exact spelling of each column must be read from the file header in Week 1, and all code must use the verified names.
+6.2 Comparison against the required criteria
+Criterion
+Dataset A (100k, ~1%)
+Dataset B (5k, ~9.64%)
+Dataset C (50k, ~32%)
+Size for training and evaluation
+Large; only ≈1,000 fraud cases overall (≈200 in a 20% test split), so recall estimates are noisy
+Small; ≈482 fraud cases overall (≈96 in a 20% test split) – high variance, risk of over-fitting
+Large; ≈16,000 fraud cases – stable estimates
+Feature diversity
+Low: only amount, date, merchant ID, type, location
+High: behavioural (previous transactions, average spending, account age), device, payment, international flag
+High: balance, daily count, card age/type, previous fraud flag, device, merchant category
+Numerical / categorical / temporal
+One numeric, several categorical (one probably high-cardinality), one date
+Mostly numeric and categorical; temporal field presence [To verify]
+Numeric, categorical and a date field
+Target quality
+[To verify] values strictly 0/1; label definition unknown
+[To verify] values 0/1 or Yes/No; label definition unknown
+[To verify] values strictly 0/1; label definition unknown
+Class balance realism
+Closest to real-world prevalence
+Moderately imbalanced
+Unrealistically high fraud rate
+Leakage risk
+Low (few fields); TransactionID and possibly MerchantID are identifiers
+Elevated: the suspicious-keyword field may be derived from, or strongly tied to, the label – must be checked
+Moderate: "previous fraudulent activity" is legitimate history only if it truly precedes the transaction – must be checked
+Dashboard suitability
+Good for trend, type, location and amount views; no payment/merchant category
+Good category and payment analysis; few time-based views
+Good: time, type, location, merchant category, device, card type
+Synthetic / unverified data
+Yes – results are not evidence of real-world performance
+Yes – same caveat
+Yes – same caveat; prevalence is artificial
+6.3 Recommendation
+Primary dataset [Recommendation]: Dataset C (synthetic_fraud_dataset1.csv).
+ Reasons:
+It is large enough for stable train/validation/test splits and quick enough to train several models on a student laptop.
+It contains numerical, categorical and temporal variables, which allows every EDA chart and every dashboard page in this PRD to be built from real columns.
+It supports the feature ideas in FR-04 (time-of-day features, balance-based features, daily transaction count) without inventing customer histories.
+Dataset A is too sparse in features to show meaningful modelling or analytics; Dataset B is small, and its suspicious-keyword field is a likely leakage source.
+Accepted weaknesses.
+ Dataset C's 32% fraud rate is not realistic and is likely generated by a simple rule or random process. Consequently:
+PR-AUC must be interpreted relative to the prevalence (a random model's PR-AUC equals the positive-class rate, about 0.32 here), not relative to 0.5.
+Any strong performance must be explained cautiously: it may reflect the synthetic generating rule rather than learnable real-world fraud signal.
+The final report must state that performance on this dataset does not establish effectiveness on real banking transactions.
+Optional secondary experiment [Recommendation]: Dataset A.
+ Re-running the same pipeline on Dataset A demonstrates behaviour at ≈1% prevalence, where a "predict everything legitimate" model is already ≈99% accurate. Use only the columns that exist (no invented features). Report its results in a separate table, never pooled with Dataset C.
+Dataset B [Recommendation]:
+ retain for reference only. Use it as an experiment only if the intern can demonstrate (a) the suspicious-keyword field is not label-derived, or (b) results are reported with and without that field.
+6.4 Week 1 audit protocol and decision gate
+Run the same audit notebook on all three datasets and record results in docs/dataset_audit.md:
+Check
+What to do
+Output
+Shape and types
+Print rows, columns, dtypes; confirm they match the verified counts
+Table
+Header verification
+Record exact column names and spelling; flag anything not found
+Schema file (schema.yaml)
+Target validation
+List unique target values and counts; confirm binary; compute fraud rate
+Distribution table
+Missing values
+Count and percentage per column; decide handling per column and document why
+Missingness table
+Duplicates
+Check full-row duplicates and duplicate IDs; check for conflicting labels on identical feature rows
+Duplicate report
+Invalid values
+Negative or zero amounts, impossible dates, unexpected categories, unit inconsistencies
+Issue log with decision for each
+Date parsing
+Parse with explicit format and errors flagged; report range and gaps
+Date summary
+Leakage review
+For each feature: Could it be known at transaction time? Is it derived from the label? Does a single-feature model achieve near-perfect scores?
+Leakage checklist
+Single-feature screen
+Train a shallow tree on each feature alone; unusually high ROC-AUC flags suspicion
+Ranked table
+Hash comparison
+Confirm the extra copy of the synthetic dataset is byte-identical
+Hash list
+Decision gate (end of Week 1):
+ Proceed with Dataset C if its target is valid binary, it has no unexplained duplicates or label-derived features, and every required field loads cleanly. If the audit finds blocking issues, fall back to Dataset A (and document the reduced feature scope) or to Dataset B (with the keyword field handled as above). Record the decision, date and reason.
+6.5 Dealing with synthetic data
+State on the dashboard (Model Performance page) and in the report: "The data is synthetic or of unknown provenance. These results do not demonstrate real-world effectiveness."
+Do not describe any discovered pattern as a real fraud pattern; describe it as a pattern in this dataset.
+Do not combine datasets with different schemas or label definitions. If a cross-dataset experiment is attempted, document the shared fields, mapping, and label equivalence first; otherwise skip it.
+7. Functional Requirements
+Priorities follow MoSCoW: 
+Must
+ (required for success), 
+Should
+ (important, include if time allows), 
+Could
+ (optional enhancement). Each requirement lists dependencies and testable acceptance criteria. Column names used in examples are conceptual until verified in the Week 1 audit.
+ID
+Requirement
+Priority
+Depends on
+FR-01
+Data ingestion
+Must
+–
+FR-02
+Data cleaning
+Must
+FR-01
+FR-03
+Exploratory data analysis
+Must
+FR-02
+FR-04
+Feature engineering and leakage checks
+Must
+FR-02, FR-03
+FR-05
+Machine learning models
+Must
+FR-04
+FR-06
+Imbalanced classification handling
+Must
+FR-04, FR-05
+FR-07
+Model evaluation and threshold selection
+Must
+FR-05, FR-06
+FR-08
+Transaction prediction (single and batch)
+Must
+FR-07
+FR-09
+Interactive dashboard (5 pages)
+Must
+FR-03, FR-07, FR-08
+FR-10
+Data storage and reproducibility
+Should
+FR-01, FR-08
+FR-11
+Alerts and monitoring (dashboard-based)
+Should
+FR-08, FR-09
+FR-01: Data Ingestion
+Description
+The system loads the selected CSV, reports its structure, validates that required columns and target values exist, and shows clear errors. Where practical, users can upload a compatible CSV.
+Priority
+Must
+Dependencies
+None (first step); schema definition from Week 1 audit.
+Acceptance criteria
+Displays row count, column count, column names and data types after loading.
+A config file (schema.yaml) lists required columns, types, and allowed target values.
+If a required column is missing, the error message names the missing column(s) and the expected list; the application does not crash.
+If the target column contains values outside the allowed set (e.g., not 0/1), the load is rejected or the rows are quarantined with a visible message.
+Empty files, non-CSV files and files with the wrong delimiter produce a readable error.
+The selected dataset loads without manual editing and passes all validation checks.
+FR-02: Data Cleaning
+Description
+Detect and handle missing values, duplicates and invalid values; parse dates safely; record every transformation. No record is silently deleted.
+Priority
+Must
+Dependencies
+FR-01.
+Acceptance criteria
+A data-quality report lists missing counts, duplicate counts, invalid-value counts and date-parsing failures.
+Dates are parsed with an explicit format and errors="coerce"-style handling; unparseable values are counted and listed, not hidden.
+Numerical range checks (e.g., negative amounts) and categorical value checks are run and the results recorded.
+Each transformation (drop, impute, cap, recode) is logged in docs/cleaning_log.md with rationale, count of affected rows and before/after statistics.
+Rows removed are saved to a rejected_rows.csv with a reason column.
+Imputation statistics are learned from training data only (inside the pipeline) to avoid leakage.
+FR-03: Exploratory Data Analysis
+Description
+Produce visualisations using only actual columns of the selected dataset.
+Priority
+Must
+Dependencies
+FR-02.
+Acceptance criteria
+Charts present: fraud vs legitimate counts; fraud percentage; amount distribution (log scale if skewed); fraud rate by transaction type, location and (if present) merchant/payment category; temporal patterns (hour, weekday, month) if dates support it; missing values; outliers (box plots); correlation heat map for numerical variables.
+Every chart has a title, axis labels and units; category rates show the group size so small groups are not over-interpreted.
+No chart references a column absent from the dataset (checked by a test that runs the EDA module against the schema).
+A short written "findings" section in the notebook states what each chart shows, avoiding causal claims.
+FR-04: Feature Engineering and Leakage Checks
+Description
+Create features supported by the data; exclude identifiers; check for label leakage.
+Priority
+Must
+Dependencies
+FR-02, FR-03.
+Acceptance criteria
+Candidate features (only if supporting columns exist): transaction hour, day of week, month, weekend flag; amount; amount-to-balance ratio; amount relative to average spending (Dataset B only, where an average-spending field exists); daily transaction count (if provided as a column); encoded categories; international indicator (if available).
+No feature requires customer history or real-time infrastructure that is not in the file.
+Identifiers (transaction ID, and merchant/customer IDs unless justified) are excluded from model inputs; any exception is documented.
+A leakage checklist is completed for each feature (known at transaction time? derived from label? post-investigation?).
+All feature logic lives in one module used by both training and inference.
+FR-05: Machine Learning Models
+Description
+Staged modelling strategy with a reproducible scikit-learn pipeline.
+Baseline:
+ Logistic Regression. 
+Comparison:
+ Decision Tree, Random Forest. 
+Optional:
+ XGBoost or other gradient boosting; Isolation Forest as an unsupervised experiment. A majority-class DummyClassifier is included as a sanity baseline.
+Priority
+Must
+Dependencies
+FR-04.
+Acceptance criteria
+Each model is trained inside a Pipeline / ColumnTransformer with imputation, encoding and (where needed) scaling.
+At least three modelling configurations are compared (e.g., Logistic Regression, Decision Tree, Random Forest).
+A fixed random seed is set for splits and models; two runs give identical metrics.
+Training and prediction times are recorded.
+The report explains for each algorithm: why it was chosen, assumptions, strengths, weaknesses and computational cost (see Section 9.3).
+Optional models are only added if dependencies install and time permits; absence of them does not fail the project.
+FR-06: Imbalanced Classification
+Description
+Handle class imbalance without contaminating evaluation.
+Priority
+Must
+Dependencies
+FR-04, FR-05.
+Acceptance criteria
+Stratified train/validation/test split for these independently sampled tabular datasets; the test set keeps the original class ratio.
+Resampling (random undersampling, SMOTE) is applied only to training data or inside training folds (e.g., with imblearn.pipeline.Pipeline).
+Class weighting is compared with at least one resampling method when justified; the choice is explained.
+Evaluation is on the original, unresampled test distribution.
+A test confirms no row appears in both train and test, and that the test fraud rate matches the full-data rate within rounding.
+The report explains why accuracy alone is misleading and reports the accuracy of the majority-class baseline for comparison.
+FR-07: Model Evaluation and Threshold Selection
+Description
+Evaluate and compare models with metrics suited to rare positives; select an operating threshold on validation data.
+Priority
+Must
+Dependencies
+FR-05, FR-06.
+Acceptance criteria
+For each model: confusion matrix, precision, recall (fraud detection rate), F1, ROC-AUC (from scores/probabilities), PR-AUC (average precision), false-positive and false-negative counts, training and prediction time.
+A single results table compares all configurations side by side.
+The threshold is selected using validation data (or cross-validated out-of-fold predictions) against a stated business rationale (for example, maximum precision subject to a minimum recall, or minimising a cost-weighted error); the final test set is 
+not
+ used for this.
+The threshold analysis shows how precision, recall and flag counts change across thresholds.
+A written discussion covers the trade-off between missing fraud and flagging legitimate transactions.
+All reported numbers are produced by executed code and saved to reports/metrics.json; none are typed by hand.
+FR-08: Transaction Prediction
+Description
+Accept one compatible record or a CSV batch and return predictions using the saved pipeline.
+Priority
+Must
+Dependencies
+FR-07 (saved model and threshold).
+Acceptance criteria
+Output columns: transaction identifier (if present), predicted class, fraud probability (or anomaly score), risk category, and model version.
+Risk categories are defined from documented thresholds (e.g., Low / Medium / High, with the High cut-off equal to the selected operating threshold).
+Every prediction view carries the notice: "Predictions are model estimates, not confirmed fraud findings."
+Inference uses the same preprocessing object and feature order as training; a test compares pipeline outputs on identical data in both paths.
+Missing or extra columns are handled with a clear message (missing → error naming columns; extra → ignored with a warning).
+FR-09: Interactive Dashboard
+Description
+A Streamlit application with five pages as detailed in Section 10, with filters, clear labels, loading states and helpful errors.
+Priority
+Must
+Dependencies
+FR-03, FR-07, FR-08.
+Acceptance criteria
+All five pages render without errors on the selected dataset.
+Actual dataset labels and model predictions are visually and textually distinguished (e.g., "Actual fraud (label)" vs "Predicted high risk (model)").
+Filters (date, transaction type, location and other available attributes) update all charts on a page consistently.
+A user can upload a valid CSV, run predictions, filter results and download a CSV.
+Invalid uploads show a plain-language error, not a stack trace.
+The page loads within a reasonable time on a student laptop (target: under 5 seconds after first load; cached data).
+FR-10: Data Storage and Reproducibility
+Description
+Lightweight storage and a reproducible workflow. SQLite may store imported transactions, predictions and evaluation metadata.
+Priority
+Should
+Dependencies
+FR-01, FR-08.
+Acceptance criteria
+Database schema, unique identifiers and duplicate handling are documented (Section 12).
+Each stored prediction includes model version and prediction timestamp.
+Import and export are possible via the dashboard or documented script.
+A documented command resets the database and reruns the pipeline from scratch.
+Sensitive data is minimised: no names, full card numbers or other personal data are stored beyond what the dataset provides and is needed.
+FR-11: Alerts and Monitoring
+Description
+Dashboard-based alerts and visual highlighting of high-risk transactions for v1.
+Priority
+Should
+Dependencies
+FR-08, FR-09.
+Acceptance criteria
+High-risk transactions are highlighted (colour plus text label so colour is not the only cue).
+A banner shows the count of high-risk transactions in the current view.
+No claim of real-time processing appears in the UI, README or report.
+No credentials (e-mail passwords, API keys) appear in source code; any future secret is read from environment variables or an untracked .env file.
+Kafka, Spark Streaming and e-mail alerts are documented only as future enhancements.
+8. Non-Functional Requirements
+Numeric targets below are 
+provisional
+ engineering targets for a student laptop and must be validated or adjusted after the first measurements.
+ID
+Area
+Requirement
+Measurable criterion
+NFR-01
+Reliability and reproducibility
+Same code, data and seed produce the same metrics
+Two runs give identical results; requirements.txt pins versions
+NFR-02
+Performance
+Reasonable runtime on a typical student laptop (e.g., 8 GB RAM, no GPU)
+Full training of all required models in under ~15 min; batch scoring of 10,000 rows in under ~30 s [target]
+NFR-03
+Input validation
+All inputs are validated before use
+Test suite covers missing columns, bad types, empty files, invalid target values
+NFR-04
+Error handling
+User-friendly messages; no unhandled exceptions in the UI
+Manual test script of invalid inputs shows messages only
+NFR-05
+Maintainability
+Modular code with functions/classes, docstrings, consistent style
+Linter (e.g., ruff/flake8) passes; no module over ~400 lines [guideline]
+NFR-06
+Data handling
+Responsible handling of transaction data
+No raw data committed if restricted; no unnecessary sensitive fields stored
+NFR-07
+Security
+Secure configuration and secret management
+No hard-coded credentials (checked by search/secret scan); .env in .gitignore
+NFR-08
+Documentation
+Clear setup, methodology and limitations
+A new user can run the app following README only
+NFR-09
+Accessibility and readability
+Readable charts and colour-independent cues
+Colour-blind-safe palette; labels and titles on all charts; sufficient contrast
+NFR-10
+Consistency
+Same preprocessing in training and inference
+Integration test passes using one saved pipeline object
+NFR-11
+Explainability and limitations
+Predictions are explained as estimates; limitations visible
+Disclaimer present on prediction and performance pages; feature-importance views do not claim causality
+NFR-12
+Portability
+Works on Windows, macOS, Linux with Python 3.10+
+Setup tested on at least one OS from a clean virtual environment
+9. ML Methodology and Evaluation Strategy
+9.1 Data splitting
+Hold-out test set:
+ 20% of rows, stratified on the target, locked away until final evaluation.
+Validation:
+ use stratified 5-fold cross-validation on the remaining 80% (or a 60/20/20 split) for model selection, hyper-parameter tuning, and threshold selection.
+Temporal check:
+ the datasets are described as synthetic, so a random stratified split is acceptable. If a date field exists, also run one time-ordered split (train on earlier dates, test on later ones) as a robustness check and report it separately. This is a recommendation, not a requirement, because transactions in a real system are time-dependent.
+Seed:
+ one project-level RANDOM_STATE in the configuration file.
+9.2 Preprocessing pipeline
+Numeric: median imputation → scaling (needed for Logistic Regression; harmless for trees).
+Categorical: most-frequent imputation → one-hot encoding with handle_unknown="ignore"; for any high-cardinality field consider frequency encoding or exclusion.
+Date-derived features computed by a custom transformer (hour, weekday, month).
+Everything is assembled in a single scikit-learn Pipeline so that fit sees training data only and the same fitted object is used at inference.
+9.3 Models and rationale
+Model
+Why selected
+Assumptions
+Strengths
+Weaknesses
+Compute cost
+Dummy (majority class)
+Sanity baseline: shows what "do nothing" scores
+None
+Exposes misleading accuracy
+Detects no fraud
+Negligible
+Logistic Regression (baseline)
+Simple, fast, interpretable; coefficients are inspectable
+Roughly linear log-odds; scaled inputs
+Calibrated-ish probabilities; low variance
+Misses non-linear interactions
+Low
+Decision Tree
+Transparent rules; captures interactions
+None strong
+Easy to explain and visualise
+High variance; over-fits without depth limits
+Low
+Random Forest
+Robust ensemble of trees; strong tabular baseline
+None strong
+Handles non-linearity; less over-fitting; feature importances
+Less interpretable; larger model; slower
+Medium
+XGBoost / gradient boosting (optional)
+Often best on tabular data
+None strong
+High accuracy; native imbalance weighting
+More tuning; extra dependency
+Medium
+Isolation Forest (optional)
+Unsupervised anomaly detection; useful where labels are scarce
+Fraud is rare and different
+No labels needed for training
+Often weaker than supervised models when labels exist; score-to-threshold mapping needs care
+Low–Medium
+Deep learning, autoencoders, SVM and K-NN from the reference notebooks are 
+not required
+. SVM and K-NN scale poorly on larger data; autoencoders add complexity without clear benefit at this scope.
+9.4 Handling class imbalance
+Technique
+Where applied
+Notes
+Class weights (class_weight="balanced")
+Inside model
+First choice: simple, no synthetic data
+Random undersampling
+Training folds only
+Fast; discards data; compare against class weights
+SMOTE
+Training folds only, after encoding of categories
+Needs numeric features; can create unrealistic synthetic samples; use via imblearn pipeline
+Threshold tuning
+Validation predictions
+Often as impactful as resampling; applies to every model
+Never resample before splitting. Never evaluate on resampled data. Report the unresampled test distribution next to every metric table.
+9.5 Why accuracy is not enough
+At roughly 1% fraud (Dataset A), a model that labels every transaction as legitimate reaches about 99% accuracy while detecting no fraud. Even at about 32% fraud (Dataset C), accuracy hides how many frauds are missed and how many legitimate customers are flagged. Therefore recall, precision, F1, PR-AUC and the confusion matrix are mandatory, and the accuracy of the majority-class baseline must be reported alongside.
+9.6 Metrics
+Metric
+Meaning for fraud
+Notes
+Recall (fraud detection rate)
+Share of actual fraud caught
+Misses are costly
+Precision
+Share of flagged transactions that are actually fraud
+Low precision means analyst overload and customer friction
+F1-score
+Harmonic mean of precision and recall
+Single summary, threshold-dependent
+ROC-AUC
+Ranking ability across thresholds
+Can look optimistic with rare positives
+PR-AUC (average precision)
+Precision–recall trade-off
+Interpret relative to prevalence
+Confusion matrix; FP and FN counts
+Concrete operational impact
+Report counts, not just rates
+Training and prediction time
+Practicality
+Record in seconds
+9.7 Threshold selection
+Obtain out-of-fold (or validation) probabilities for the chosen model.
+State a business rationale before looking at results (for example: "catch at least X% of fraud while keeping the flag volume manageable"; X is chosen by the team and documented).
+Compute precision, recall and flag counts for thresholds from 0.05 to 0.95; plot them.
+Pick the threshold that satisfies the rule; save it with the model.
+Apply the threshold once to the untouched test set and report results.
+9.8 Hyper-parameter tuning and model selection
+Keep tuning modest: a small grid or randomised search with stratified cross-validation, scored by PR-AUC (or recall at a minimum precision).
+Select the final model on validation results and parsimony (a simpler model is preferred when scores are similar).
+Report variability (e.g., mean ± standard deviation across folds) so that small differences are not over-interpreted.
+9.9 Leakage prevention summary
+Split before any fitted transformation.
+Fit imputers, encoders and scalers on training data only (via the pipeline).
+Resample inside training folds only.
+Exclude identifiers and any label-derived or post-event fields.
+Do not tune the threshold or hyper-parameters on the test set.
+Run the single-feature screen from Section 6.4 and investigate unusually strong features.
+9.10 Interpreting results honestly
+Because the data is synthetic or of unknown origin, any strong results may reflect the data-generating rule and may not transfer to real transactions. Feature importance describes what the model used, not why fraud happens. Predictions are probabilistic estimates and should never be presented as confirmed fraud.
+10. Dashboard and User Experience Requirements
+Streamlit is the primary interface because it integrates directly with the Python model pipeline, requires no separate web stack, and is fast to build. The five Power BI archives supplied by the mentor serve as visual and analytical references (KPIs, trends, transaction types, locations, amounts); they are not proof of implemented features and are not part of the deliverable unless Power BI is explicitly chosen.
+Page
+Content
+Key interactions
+1. Executive Overview
+Total transactions
+Flagged transactions (model)
+Observed fraud rate (labels, if available)
+Total transaction value
+Flagged transaction value
+Fraud vs legitimate distribution
+Clear separation of "actual labels" and "model predictions"
+Date range filter; KPI cards with tooltips explaining each definition
+2. Transaction Analytics
+Trends over time
+Amount distribution
+Transaction-type analysis
+Merchant / payment-method analysis (if available)
+Location analysis
+Filters: date, type, location, other available attributes; filters apply to all charts on the page
+3. Fraud Detection
+CSV upload
+Run predictions
+Flagged-record table
+Download results
+Filter by predicted class, risk category, amount; progress indicator while scoring; validation messages
+4. Model Performance
+Model comparison table
+Confusion matrix
+Precision, recall, F1
+ROC and Precision–Recall curves
+Threshold analysis
+Limitations and methodology
+Select model; threshold slider (validation-based view); disclaimer about synthetic data
+5. Detailed Transaction Review
+Selected transaction attributes
+Predicted class and score
+Supporting features (no causal claims)
+Export of filtered results
+Select/search by transaction ID; filtered export
+10.1 Design requirements
+Consistent layout: sidebar navigation, shared filter section, consistent colour use (one colour for fraud/high-risk, another for legitimate/low-risk) with text labels as well as colour.
+Clear chart titles, axis labels, units, and tooltips; avoid 3-D and cluttered charts.
+Loading states (spinners) for data loading and prediction; st.cache_data / st.cache_resource for data and model.
+Responsive layout using columns and use_container_width.
+Helpful errors: show what is wrong and how to fix it.
+Persistent disclaimer: "Model output is an estimate, not confirmation of fraud. Educational prototype."
+10.2 If Power BI is chosen instead
+If the mentor requires Power BI, the PRD must be extended with a data model (fact table of transactions plus date, type and location dimensions), relationships, DAX measures (total transactions, fraud count, fraud rate, flagged value), slicers and the five pages above. Power BI would visualise exported prediction files; it does not provide a deployable ML inference service, so the Python pipeline would still be required.
+11. System Architecture and Data Flow
+A simple, single-process architecture is used. There are no microservices, queues or distributed components.
+11.1 Text architecture diagram
++------------------+     +----------------------+     +---------------------+
+|  CSV datasets    | --> | 1. Ingestion &       | --> | 2. Cleaning,        |
+|  (raw, read-only)|     |    Validation        |     |    Features (shared)|
++------------------+     |  schema.yaml checks  |     |    src/features     |
+                         +----------------------+     +----------+----------+
+                                                                 |
+                         +----------------------+                v
+                         | 4. Evaluation &      | <-- +---------------------+
+                         |    Threshold (valid.)|     | 3. Training &       |
+                         +----------+-----------+     |    Model comparison |
+                                    |                 |    (CV, imbalance)  |
+                                    v                 +---------------------+
+                         +----------------------+
+                         | 5. Saved pipeline    |   model.joblib + threshold.json
+                         |    (Joblib)          |   + metrics.json + version
+                         +----------+-----------+
+                                    |
+            +-----------------------+------------------------+
+            v                                                v
+  +-----------------------+                       +---------------------+
+  | Inference module      | --------------------> | SQLite (optional)   |
+  | validate -> predict   |   predictions,        | transactions,       |
+  | -> risk category      |   model version,      | predictions, runs   |
+  +-----------+-----------+   timestamp           +---------------------+
+              |
+              v
+  +----------------------------------------------------------------+
+  | 6. Streamlit dashboard                                         |
+  |  Overview | Analytics | Fraud Detection | Performance | Review |
+  +----------------------------------------------------------------+
+ 
+  7. Tests (pytest) and documentation cover every component above.
+11.2 Data flow
+Ingest:
+ the CSV is read with Pandas; the schema file defines required columns and types; validation errors are reported.
+Clean:
+ missing values, duplicates, invalid values and dates are handled; changes are logged.
+Split:
+ stratified split into train and test; the test set is locked.
+Train:
+ a pipeline (feature engineering → encode/scale → model) is trained with cross-validation; imbalance methods are used within training folds.
+Evaluate:
+ metrics and curves are produced on validation; the threshold is chosen; the final test evaluation is executed once.
+Persist:
+ the fitted pipeline, threshold, feature list, metrics and version string are saved.
+Infer:
+ the dashboard loads the saved pipeline, validates uploaded data against the schema, predicts, assigns risk categories.
+Display:
+ results and analytics are rendered; users filter, review and export.
+11.3 Technology choices
+Component
+Choice
+Rationale
+Language
+Python 3.10+
+Standard for data science; matches the reference notebooks
+Data handling
+Pandas, NumPy
+Sufficient for 10^4–10^5 rows
+EDA charts
+Matplotlib / Seaborn (notebooks); Plotly or Altair optional in Streamlit for interactivity
+Familiar tools; interactivity in the app
+Modelling
+Scikit-learn (Pipeline, ColumnTransformer, metrics)
+Consistent preprocessing and evaluation; no heavy dependencies
+Imbalance
+imbalanced-learn (SMOTE, undersampling) – only if used
+Pipeline-safe resampling
+Boosting
+XGBoost (optional)
+Only if installation and time permit
+Dashboard
+Streamlit
+Direct Python integration; quick to build
+Persistence
+SQLite (via sqlite3 or SQLAlchemy)
+No server; file-based; adequate for the prototype
+Model saving
+Joblib
+Efficient for scikit-learn objects
+Testing
+pytest
+Simple and widely used
+Version control
+Git and GitHub
+Required for collaboration and review
+Note: Joblib files can execute code when loaded. Only load model files produced by the project itself, and do not accept user-uploaded model files.
+12. Data Storage and Model Management
+12.1 Storage strategy
+Raw CSVs remain untouched in data/raw/. Cleaned data goes to data/processed/. SQLite (data/fraud.db) is optional and used for imported transactions, predictions and evaluation metadata when persistence across sessions is needed. The Streamlit app must work in a no-database mode for the uploaded file if time is short.
+12.2 Proposed SQLite schema [Recommendation]
+Table
+Columns (key fields)
+Purpose
+dataset_runs
+run_id (PK), source_filename, file_sha256, imported_at, row_count
+Track each import and prevent silent re-import of identical files
+transactions
+txn_pk (PK, autoincrement), run_id (FK), source_txn_id, raw fields per verified schema, actual_label (nullable)
+Imported transactions; unique constraint on (run_id, source_txn_id) where an ID exists
+model_versions
+model_version (PK), created_at, algorithm, threshold, dataset_name, metrics_json, pipeline_path, git_commit
+Model registry (lightweight)
+predictions
+prediction_id (PK), txn_pk (FK), model_version (FK), probability, predicted_class, risk_category, predicted_at
+Stores outputs with model version and prediction timestamp
+12.3 Rules
+Unique identifiers:
+ use the dataset transaction ID where present and unique; otherwise generate a surrogate key. Document how duplicate IDs are handled (keep first and log, or reject the file).
+Duplicates:
+ the import step hashes the file and compares per-row keys; duplicates are skipped and counted in the import summary.
+Import/export:
+ import via upload or script; export predictions as CSV with model version and timestamp columns.
+Reset/rerun:
+ python -m src.cli reset (or make reset) deletes the database and generated artefacts; make train then regenerates the model and metrics.
+Sensitive data:
+ store only what the analysis needs; do not store any real card numbers or personal data; hash or drop identifiers if the dataset ever contains real ones.
+12.4 Model artefacts
+Artefact
+Location
+Content
+Fitted pipeline
+models/fraud_pipeline_vX.joblib
+Preprocessing + model
+Threshold & risk bands
+models/threshold.json
+Operating threshold and category cut-offs, with the validation rationale
+Feature schema
+models/feature_schema.json
+Ordered input columns and types
+Metrics
+reports/metrics.json, reports/results_table.csv
+Values from executed experiments only
+Figures
+reports/figures/
+Confusion matrices, ROC/PR curves, threshold plots
+Metadata
+models/metadata.json
+Library versions, random seed, training date, dataset hash, git commit
+13. Testing and Acceptance Criteria
+13.1 Test plan
+Test area
+Test type
+Pass condition
+Valid CSV load
+Unit
+Shape, columns and dtypes match schema
+Invalid CSV (empty, wrong delimiter, binary file)
+Unit
+Readable error raised; app does not crash
+Missing required columns
+Unit
+Error names the missing columns
+Unexpected target values
+Unit
+Rejected or quarantined with message
+Missing values and duplicates
+Unit
+Detected, counted and handled per documented rule
+Preprocessing consistency
+Unit
+Transformer output identical for the same input in train and inference paths; feature order fixed
+Pipeline compatibility
+Integration
+Fitted pipeline predicts on a held-out sample; output shape equals input row count
+Prediction validity
+Unit
+Probabilities in [0, 1]; classes in {0, 1}; risk categories in the allowed set
+Metric calculations
+Unit
+Metrics match hand-computed values on a tiny synthetic example
+Save/load model
+Integration
+Loaded model gives identical predictions to the in-memory model
+Train/test leakage
+Unit
+No index overlap; stratification preserves class ratio within a small tolerance; resampling occurs only in training data
+Reproducibility
+Integration
+Two runs with the same seed give identical metrics
+Dashboard filters
+Integration (Streamlit AppTest or manual script)
+Filtered row counts match expected pandas results
+Dashboard prediction workflow
+Integration / manual
+Upload → predict → filter → download works on a sample file
+No credentials in source
+Static check
+Search finds no passwords or keys
+13.2 Acceptance criteria summary
+Requirement
+Accepted when
+FR-01
+Valid file loads; each invalid case yields a clear message
+FR-02
+Quality report and cleaning log complete; no silent deletions
+FR-03
+All listed charts built from real columns; findings documented
+FR-04
+Features documented; leakage checklist done; identifiers excluded
+FR-05
+≥ 3 configurations trained in a reproducible pipeline
+FR-06
+Stratified held-out test set; resampling only in training; baseline comparison done
+FR-07
+Metrics table with all required metrics; threshold chosen without test data
+FR-08
+Single and batch predictions work; same pipeline used; disclaimer shown
+FR-09
+All five pages work; actual vs predicted clearly separated; export works
+FR-10
+Schema documented; model version and timestamp stored; reset works
+FR-11
+High-risk highlighting works; no real-time claims; no hard-coded secrets
+Suggested code-coverage target for core modules (data, features, inference, evaluation): at least ~70% [target, adjustable].
+14. Four-Week Implementation Plan
+The schedule follows the mentor-prescribed structure. The task lists are sequenced so that a working end-to-end skeleton exists by mid-Week 2, reducing integration risk.
+Week 1 — Data Understanding
+Goal:
+ Know the data and select the primary dataset.
+Days
+Tasks
+Output
+1
+Set up repo, virtual environment, folder structure; verify file hashes; remove duplicate copies from the working set
+Repo skeleton; hash list
+2–3
+Run the audit notebook on all three datasets (schema, target, missing, duplicates, invalid values, dates)
+dataset_audit.md; schema files
+3–4
+Leakage review and single-feature screen; compare datasets against the criteria in Section 6
+Leakage checklist; comparison table
+4–5
+EDA on the selected dataset; document data quality and feature availability; decision gate
+EDA notebook; selection decision
+Exit criteria:
+ Primary dataset selected and justified; EDA complete; quality issues logged; mentor sign-off.
+Week 2 — Machine Learning
+Goal:
+ Train, compare and evaluate models correctly.
+Days
+Tasks
+Output
+1
+Implement preprocessing and feature engineering module; stratified split; dummy and Logistic Regression baselines
+Baseline metrics (executed)
+2
+Add Decision Tree and Random Forest; cross-validation
+Comparison table
+3
+Class weighting vs one resampling method (inside training folds); optional XGBoost / Isolation Forest
+Imbalance comparison
+4
+Threshold analysis on validation data; final test evaluation (once); save pipeline and metadata
+Saved model, metrics.json, figures
+5
+Review results with mentor; write modelling notes and limitations
+Modelling report draft
+Exit criteria:
+ Saved pipeline reproduces metrics; evaluation follows FR-06 and FR-07; no leakage tests failing.
+Week 3 — Dashboard and Integration
+Goal:
+ Build the application around the saved pipeline.
+Days
+Tasks
+Output
+1
+Streamlit skeleton, navigation, data loading and caching; Executive Overview page
+Page 1
+2
+Transaction Analytics page with filters
+Page 2
+3
+Fraud Detection page: upload, validation, batch prediction, filters, download
+Page 3
+4
+Model Performance page (table, confusion matrix, curves, threshold analysis, limitations)
+Page 4
+5
+Detailed Transaction Review page; optional SQLite persistence; high-risk highlighting
+Page 5
+Exit criteria:
+ All five pages run end-to-end on the selected dataset; upload → predict → export works.
+Week 4 — Testing and Delivery
+Goal:
+ Make it reliable, documented and demonstrable.
+Days
+Tasks
+Output
+1–2
+Complete unit and integration tests; fix defects; validate predictions and dashboard behaviour
+Passing test suite
+3
+Refine UI (labels, tooltips, errors, loading states); accessibility check
+Polished interface
+4
+README, setup instructions, architecture diagram, final report (methodology, results, limitations)
+Documentation
+5
+Dry run from a clean clone; prepare presentation and demo script; final submission
+Demo and deliverables
+Exit criteria:
+ Fresh-clone setup works; tests pass; report and demo complete.
+Scope-control rule:
+ if the schedule slips, drop in this order: Isolation Forest → XGBoost → SQLite persistence → secondary dataset experiment → time-ordered split. The Must requirements are never dropped.
+15. Risks, Assumptions and Dependencies
+15.1 Risks
+ID
+Risk
+Likelihood
+Impact
+Mitigation
+R1
+Leakage produces inflated results
+Medium
+High
+Leakage checklist, single-feature screen, pipeline-only fitting, tests
+R2
+Synthetic data limits real-world meaning
+High
+Medium
+Explicit disclaimers; avoid real-world claims
+R3
+Reference notebooks fail (missing CSV filenames, dependency versions)
+High
+Medium
+Use them as guidance only; re-implement against verified schema
+R4
+Column names differ from assumptions
+Medium
+Medium
+Week 1 header verification; schema-driven code
+R5
+Dataset A yields weak signal (few features, ~1% fraud)
+Medium
+Low
+Dataset A is secondary; report honestly
+R6
+Time overrun on dashboard
+Medium
+Medium
+Skeleton by mid-Week 2; scope-control order in Section 14
+R7
+Dependency installation problems (XGBoost, imbalanced-learn)
+Low–Medium
+Low
+Optional dependencies; fallback to scikit-learn only
+R8
+Small positive class makes metrics unstable (esp. Datasets A, B)
+Medium
+Medium
+Cross-validation; report variability; avoid over-tuning
+R9
+Training/inference mismatch
+Medium
+High
+Single saved pipeline; consistency tests
+R10
+Credentials committed accidentally
+Low
+High
+.gitignore, .env, secret scan; no e-mail features in v1
+R11
+Over-interpretation of feature importance
+Medium
+Low
+Wording rules; "supporting features, not causes"
+15.2 Assumptions
+[Assumption] Dataset C's exact column names can be read from its header and map onto the described fields; code will use whatever names are actually present.
+[Assumption] The intern has Python 3.10+ and a laptop with at least 8 GB RAM.
+[Assumption] The datasets are independent snapshots; no customer-level histories exist unless a column explicitly provides them.
+[Assumption] The mentor accepts Streamlit as the primary dashboard.
+[Assumption] A random stratified split is acceptable for the synthetic data; a temporal split is a robustness check.
+15.3 Dependencies
+Access to the three supplied CSV files and reference materials.
+Python packages: pandas, numpy, scikit-learn, matplotlib/seaborn, streamlit, joblib, pytest; optional imbalanced-learn, xgboost, plotly.
+Mentor availability for the Week 1 decision gate and Week 2 review.
+16. Deliverables
+#
+Deliverable
+Status
+1
+Complete PRD (this document)
+Mandatory
+2
+Dataset audit and selection rationale (docs/dataset_audit.md)
+Mandatory
+3
+Reproducible data preprocessing workflow (module + cleaning log)
+Mandatory
+4
+EDA notebook or analysis module
+Mandatory
+5
+Model training and comparison workflow (script/notebook)
+Mandatory
+6
+Saved model pipeline (Joblib) with threshold and metadata
+Mandatory
+7
+Evaluation report with actual results and limitations
+Mandatory
+8
+Working Streamlit application (or explicitly chosen Power BI deliverable)
+Mandatory
+9
+Transaction prediction workflow (single and batch)
+Mandatory
+10
+Automated tests (pytest)
+Mandatory
+11
+Requirements file and setup instructions
+Mandatory
+12
+README with execution instructions
+Mandatory
+13
+Architecture diagram
+Mandatory
+14
+Final project report and demonstration outline
+Mandatory
+15
+SQLite persistence layer
+Optional (recommended)
+16
+Secondary-dataset experiment (Dataset A)
+Optional
+17
+XGBoost / gradient boosting comparison
+Optional
+18
+Isolation Forest anomaly-detection experiment
+Optional
+19
+Time-ordered split robustness check
+Optional
+20
+Power BI replica of dashboard pages
+Optional
+17. Success Metrics
+The project is successful when all of the following hold. No predictive-performance target is fixed in advance; any targets are provisional until a baseline is measured and the intended use is clearer.
+#
+Criterion
+Evidence
+1
+Selected dataset loads and passes documented validation
+Validation report; test passes
+2
+Preprocessing and inference operate consistently
+Consistency and save/load tests pass
+3
+At least three modelling configurations compared (when feasible)
+Results table
+4
+Evaluation includes confusion matrix, precision, recall, F1 and ranking metrics (ROC-AUC, PR-AUC)
+Metrics file and figures
+5
+Evaluation is on a held-out set without leakage
+Leakage tests; split documentation
+6
+Dashboard presents the required analytics on five pages
+Demo; screenshots
+7
+Users can submit compatible data and inspect predictions
+Upload workflow test
+8
+Implementation reproducible from setup instructions
+Clean-clone run
+9
+Limitations and the risks of false positives and false negatives are explained
+Report and dashboard sections
+17.1 Provisional performance guidance
+The models must beat the majority-class baseline on recall and PR-AUC; otherwise the pipeline or features need review.
+Unusually perfect scores (near-1.0 AUC) must trigger a leakage investigation rather than celebration.
+Acceptable precision/recall levels are set by the documented business rationale after the baseline is measured.
+18. Future Enhancements
+Enhancement
+Note
+E-mail / SMS alerts
+Needs secure credential handling (environment variables or secret manager) and rate limiting
+Kafka / Spark Streaming real-time scoring
+Only to be claimed after an actual streaming pipeline is built and tested
+Adaptive retraining and drift monitoring
+Needs production-like data and governance
+Probability calibration and cost-sensitive learning
+Improves threshold decisions
+Explainability (e.g., SHAP)
+Supporting insight only; avoid causal claims
+Deep learning / autoencoders, graph analysis
+Consider when richer relational data exists
+Analyst feedback loop
+Store reviewer decisions to improve labels
+Authentication and role-based access
+Required for any shared deployment
+Deployment (container / cloud)
+After security and privacy review
+Validation on real, de-identified data
+The most important step for judging real-world value
+Final reminder.
+ This system is an educational prototype. It must not be used as an autonomous production fraud-blocking system or to make decisions about real customers.
+Appendix A. Recommended Project Structure
+Files marked 
+M
+ are mandatory; 
+O
+ are optional.
+fraud-detection/
+|-- README.md                      M  setup, run, results summary, limitations
+|-- requirements.txt               M  pinned dependencies
+|-- requirements-optional.txt      O  xgboost, imbalanced-learn, plotly
+|-- .gitignore  /  .env.example    M  no secrets committed
+|-- Makefile (or run.sh)           O  train / test / app / reset shortcuts
+|-- config/
+|   |-- config.yaml                M  seed, paths, split sizes, risk bands
+|   `-- schema.yaml                M  required columns, types, target values
+|-- data/
+|   |-- raw/                       M  untouched CSVs (not committed if large)
+|   |-- processed/                 M  cleaned data, rejected_rows.csv
+|   `-- fraud.db                   O  SQLite database
+|-- notebooks/
+|   |-- 01_dataset_audit.ipynb     M
+|   |-- 02_eda.ipynb               M
+|   `-- 03_modelling.ipynb         O  exploratory; final code lives in src/
+|-- src/
+|   |-- data_loading.py            M  ingestion + schema validation
+|   |-- cleaning.py                M  cleaning + logging
+|   |-- features.py                M  feature engineering (shared train/infer)
+|   |-- preprocessing.py           M  ColumnTransformer / pipeline builder
+|   |-- train.py                   M  CV, imbalance comparison, saving
+|   |-- evaluate.py                M  metrics, curves, threshold selection
+|   |-- inference.py               M  load pipeline, predict, risk categories
+|   |-- eda.py                     M  reusable chart functions
+|   |-- db.py                      O  SQLite helpers
+|   `-- cli.py                     O  train / reset commands
+|-- app/
+|   |-- streamlit_app.py           M  entry point and navigation
+|   `-- pages/
+|       |-- 1_Executive_Overview.py        M
+|       |-- 2_Transaction_Analytics.py     M
+|       |-- 3_Fraud_Detection.py           M
+|       |-- 4_Model_Performance.py         M
+|       `-- 5_Transaction_Review.py        M
+|-- models/                        M  pipeline.joblib, threshold.json, metadata.json
+|-- reports/                       M  metrics.json, results_table.csv, figures/
+|-- tests/
+|   |-- test_data_loading.py       M
+|   |-- test_cleaning.py           M
+|   |-- test_features.py           M
+|   |-- test_pipeline.py           M
+|   |-- test_evaluation.py         M
+|   |-- test_leakage.py            M
+|   `-- test_app.py                O  Streamlit AppTest
+`-- docs/
+    |-- PRD.docx                   M
+    |-- dataset_audit.md           M
+    |-- cleaning_log.md            M
+    |-- architecture.md            M
+    `-- final_report.md            M
+Appendix B. Using the Reference Notebooks and Dashboards
+B.1 Notebooks
+Reference topic
+How to use it
+Caution
+EDA, cleaning, encoding, scaling
+Borrow ideas and chart types
+Rewrite against verified columns; some notebooks call CSV files that were not supplied
+Undersampling and SMOTE
+Use as a pattern for imbalance handling
+Ensure resampling happens only on training data; notebooks may resample before splitting
+Logistic Regression, Decision Tree, Random Forest
+Core of the model comparison
+Wrap in the shared pipeline
+SVM, K-NN
+Not required
+Poor scaling on larger data
+XGBoost / boosting
+Optional
+Depends on installation
+Isolation Forest, autoencoder
+Isolation Forest optional; autoencoder out of scope
+Anomaly scores need threshold mapping
+Confusion matrices, reports, ROC
+Reuse plotting ideas
+Add PR curves and threshold analysis
+Threshold adjustment, ensembles
+Use threshold adjustment; ensembling not required
+Select thresholds on validation data only
+Kafka, streaming, e-mail alerts
+Future work only
+Experimental; do not claim real-time; never hard-code credentials
+B.2 Power BI archives
+Use the five dashboards as inspiration for KPIs (total transactions, fraud rate, flagged value), trend charts, transaction-type and location breakdowns and amount bands. Do not assume that any feature seen in them is already implemented in this project or is required.
+Appendix C. Glossary
+Term
+Definition
+False positive (FP)
+A legitimate transaction predicted as fraud
+False negative (FN)
+A fraudulent transaction predicted as legitimate
+Precision
+TP / (TP + FP)
+Recall
+TP / (TP + FN); also called fraud detection rate or sensitivity
+F1-score
+2 × precision × recall / (precision + recall)
+ROC-AUC
+Area under the receiver operating characteristic curve
+PR-AUC / average precision
+Area under the precision–recall curve; baseline equals the positive-class rate
+SMOTE
+Synthetic Minority Over-sampling Technique
+Data leakage
+Use of information in training that would not be available at prediction time, or that reveals the label
+Stratified split
+A split that keeps the class ratio the same in each part
+Threshold
+Probability cut-off above which a transaction is flagged
+Synthetic data
+Artificially generated data that may not reflect real-world behaviour
