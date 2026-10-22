@@ -569,6 +569,10 @@ with st.sidebar:
             <span>Currency</span>
             <span style="color: #1E293B; font-weight: 600;">₹ INR</span>
         </div>
+        <div style="color: #64748B; margin-bottom: 5px; display: flex; justify-content: space-between;">
+            <span>Deployment</span>
+            <span style="color: #0F766E; font-weight: 700;">Light Theme v1.2</span>
+        </div>
         <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #E2E8F0; color: #64748B; font-size: 10px; text-align: center;">
             Synthetic Benchmark Evaluation
         </div>
@@ -587,7 +591,7 @@ st.markdown("""
     <div class="ribbon-right">
         <span>Dataset: <strong>synthetic_fraud_dataset1.csv</strong></span>
         <span class="ribbon-tag">₹ Indian Rupees (INR)</span>
-        <span class="ribbon-tag">Educational Prototype</span>
+        <span class="ribbon-tag" style="color: #0F766E; font-weight: 700; border-color: #CCFBF1; background: #F0FDFA;">● Live v1.2</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
