@@ -10,7 +10,7 @@
 This project implements an end-to-end Machine Learning and Data Analytics system designed to monitor financial transactions, estimate fraud probabilities, and surface risk patterns through an interactive, restrained financial analytics dashboard.
 
 Rather than relying on flashy concept visuals, the interface adheres strictly to realistic financial monitoring conventions:
-- **Restrained 2–3 Color Palette:** Dark navy (`#0F172A`), clean light grey/white (`#F8FAFC`, `#FFFFFF`), and muted slate blue (`#2563EB`). Red (`#DC2626`) is used strictly for potential fraud alerts and risk indicators.
+- **Professional Light Theme Palette:** Soft light gray canvas (`#F5F7FB`), crisp white panels/cards (`#FFFFFF`), dark navy headings and text (`#1E293B`), slate gray secondary text (`#64748B`), navy blue primary buttons and active navigation (`#1E3A5F`), and subtle teal accent (`#0F766E`). Red (`#DC2626`) is used strictly for potential fraud alerts and risk indicators.
 - **Normal Rectangular Metric Tiles:** Compact, uniform dimensions with subtle borders (`#E2E8F0`) and standard typography.
 - **Clear Separation of Data Labels vs. Model Predictions:** Historical ground-truth labels (`Fraud_Label`) are explicitly differentiated from inferred scores (`Model_Prediction` and `Fraud_Probability`).
 - **Academic & Operational Transparency:** Clearly communicates that the dataset is synthetic and serves as an educational prototype.

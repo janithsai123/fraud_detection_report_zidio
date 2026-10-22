@@ -56,11 +56,11 @@ def format_inr_lakhs(val: float) -> str:
         return f"₹{val:,.2f}"
 
 # -----------------------------------------------------------------------------
-# STYLING (DARK SIDEBAR, LIGHT MAIN CONTENT, RECTANGULAR KPI TILES)
+# STYLING (PROFESSIONAL LIGHT THEME, WHITE SIDEBAR, RECTANGULAR KPI TILES)
 # -----------------------------------------------------------------------------
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
     
     html, body, [class*="css"] {
         font-family: 'Segoe UI', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -68,23 +68,23 @@ st.markdown("""
         letter-spacing: -0.01em;
     }
     
-    /* Light Main Canvas Background */
+    /* Main Canvas Background */
     .stApp {
-        background-color: #F8FAFC;
+        background-color: #F5F7FB !important;
     }
     
     /* Top Ribbon */
     .app-top-ribbon {
         background: #FFFFFF;
-        border-bottom: 1px solid #E2E8F0;
-        padding: 6px 18px;
+        border: 1px solid #E2E8F0;
+        padding: 8px 18px;
         margin-top: -3.5rem;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        border-radius: 6px;
     }
     .ribbon-left {
         display: flex;
@@ -97,16 +97,16 @@ st.markdown("""
         gap: 8px;
         font-weight: 700;
         font-size: 13.5px;
-        color: #0F172A;
+        color: #1E293B;
     }
     .ribbon-badge {
-        background: #18181B;
-        color: #F59E0B;
-        font-weight: 800;
-        padding: 2px 7px;
-        border-radius: 3px;
+        background: #1E3A5F;
+        color: #FFFFFF;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 4px;
         font-size: 11px;
-        border: 1px solid #27272A;
+        letter-spacing: 0.03em;
     }
     .ribbon-right {
         display: flex;
@@ -116,26 +116,27 @@ st.markdown("""
         color: #64748B;
     }
     .ribbon-tag {
-        background: #F1F5F9;
+        background: #F8FAFC;
         border: 1px solid #E2E8F0;
-        color: #334155;
+        color: #475569;
         padding: 3px 9px;
         border-radius: 12px;
         font-weight: 600;
         font-size: 10.5px;
     }
     
-    /* Header Banner */
+    /* Professional Light Header Banner */
     .app-header-banner {
-        background: linear-gradient(135deg, #09090B 0%, #18181B 50%, #27272A 100%);
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-left: 4px solid #1E3A5F;
         border-radius: 6px;
-        padding: 18px 24px;
-        margin-bottom: 18px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+        padding: 16px 22px;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-left: 5px solid #F59E0B;
     }
     .app-brand {
         display: flex;
@@ -145,37 +146,38 @@ st.markdown("""
     .app-logo-tile {
         width: 42px;
         height: 42px;
-        background: linear-gradient(135deg, #27272A 0%, #18181B 100%);
-        border: 1px solid #3F3F46;
+        background: #EBF2FE;
+        border: 1px solid #BFDBFE;
         border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 20px;
-        color: #F59E0B;
+        color: #1E3A5F;
         font-weight: 800;
     }
     .app-title-box h1 {
-        color: #FFFFFF;
-        font-size: 19px;
+        color: #1E293B !important;
+        font-size: 18.5px;
         font-weight: 700;
         margin: 0;
         letter-spacing: -0.01em;
     }
     .app-title-box p {
-        color: #CBD5E1;
+        color: #64748B !important;
         font-size: 12.5px;
         margin-top: 3px;
         margin-bottom: 0;
     }
     .app-pill {
-        background: #18181B;
-        border: 1px solid #3F3F46;
-        color: #F4F4F5;
-        padding: 6px 14px;
-        border-radius: 20px;
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        color: #1E3A5F;
+        padding: 5px 12px;
+        border-radius: 16px;
         font-size: 11px;
-        font-weight: 600;
+        font-weight: 700;
+        letter-spacing: 0.03em;
     }
     
     /* Visual Container */
@@ -185,7 +187,7 @@ st.markdown("""
         border-radius: 6px;
         padding: 16px 20px;
         margin-bottom: 18px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
     .app-card-header {
         display: flex;
@@ -198,7 +200,7 @@ st.markdown("""
     .app-card-title {
         font-size: 13.5px;
         font-weight: 700;
-        color: #0F172A;
+        color: #1E293B;
     }
     .app-card-sub {
         font-size: 11.5px;
@@ -210,8 +212,8 @@ st.markdown("""
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
         border-radius: 6px;
-        padding: 16px 18px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        padding: 15px 18px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
         position: relative;
         overflow: hidden;
         height: 100%;
@@ -226,7 +228,7 @@ st.markdown("""
         left: 0;
         right: 0;
         height: 3px;
-        background: #2563EB;
+        background: #1E3A5F;
     }
     .app-kpi-label {
         font-size: 11px;
@@ -239,7 +241,7 @@ st.markdown("""
     .app-kpi-val {
         font-size: 23px;
         font-weight: 800;
-        color: #0F172A;
+        color: #1E293B;
         line-height: 1.15;
     }
     .app-kpi-footer {
@@ -266,24 +268,35 @@ st.markdown("""
         border-radius: 3px;
         font-weight: 600;
         font-size: 10px;
-        background: #18181B;
-        color: #F4F4F5;
-        border: 1px solid #27272A;
+        background: #EBF2FE;
+        color: #1E3A5F;
+        border: 1px solid #BFDBFE;
     }
     
-    /* Dark Sidebar */
+    /* Professional Light Sidebar */
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #09090B 0%, #121215 50%, #18181B 100%) !important;
-        border-right: 1px solid #27272A !important;
+        background-color: #FFFFFF !important;
+        border-right: 1px solid #E2E8F0 !important;
+    }
+    section[data-testid="stSidebar"] > div {
+        background-color: #FFFFFF !important;
+    }
+    section[data-testid="stSidebar"] div[data-testid="stSidebarUserContent"] {
+        background-color: #FFFFFF !important;
     }
     section[data-testid="stSidebar"] h1, 
     section[data-testid="stSidebar"] h2, 
     section[data-testid="stSidebar"] h3 {
-        color: #FFFFFF !important;
+        color: #1E293B !important;
+    }
+    section[data-testid="stSidebar"] p, 
+    section[data-testid="stSidebar"] span {
+        color: #1E293B;
     }
     
     /* Custom Sidebar Radio Navigation */
-    section[data-testid="stSidebar"] div[data-testid="stRadioCircle"] {
+    section[data-testid="stSidebar"] div[data-testid="stRadioCircle"],
+    section[data-testid="stSidebar"] div[data-testid="stRadio"] > div > div > label > div:first-child {
         display: none !important;
     }
     section[data-testid="stSidebar"] input[type="radio"] {
@@ -292,73 +305,117 @@ st.markdown("""
     section[data-testid="stSidebar"] div[role="radiogroup"] {
         display: flex !important;
         flex-direction: column !important;
-        gap: 8px !important;
+        gap: 6px !important;
         padding: 4px 0 !important;
     }
     section[data-testid="stSidebar"] div[role="radiogroup"] > label {
         display: flex !important;
         align-items: center !important;
-        background: #18181B !important;
-        border: 1px solid #27272A !important;
-        border-left: 4px solid #3F3F46 !important;
+        background: #FFFFFF !important;
+        border: 1px solid #E2E8F0 !important;
+        border-left: 4px solid transparent !important;
         border-radius: 6px !important;
-        padding: 10px 14px !important;
+        padding: 9px 12px !important;
         margin: 0 !important;
         cursor: pointer !important;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
-        transition: all 0.2s ease !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+        transition: all 0.18s ease-in-out !important;
     }
-    section[data-testid="stSidebar"] div[role="radiogroup"] > label div[data-testid="stMarkdownContainer"] p {
-        color: #F1F5F9 !important;
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label div[data-testid="stMarkdownContainer"] p,
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label span,
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label p {
+        color: #1E293B !important;
         font-weight: 600 !important;
         font-size: 12.5px !important;
         margin: 0 !important;
     }
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover {
-        background: #27272A !important;
-        border-left: 4px solid #CBD5E1 !important;
+        background: #F8FAFC !important;
+        border-color: #CBD5E1 !important;
+        border-left: 4px solid #94A3B8 !important;
+    }
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover div[data-testid="stMarkdownContainer"] p,
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover span,
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover p {
+        color: #1E3A5F !important;
     }
     section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"],
-    section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked) {
-        background: #27272A !important;
-        border-left: 5px solid #F59E0B !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked),
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label[aria-checked="true"] {
+        background: #EBF2FE !important;
+        border: 1px solid #BFDBFE !important;
+        border-left: 5px solid #1E3A5F !important;
+        box-shadow: 0 1px 3px rgba(30, 58, 95, 0.08) !important;
     }
     section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] div[data-testid="stMarkdownContainer"] p,
-    section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked) div[data-testid="stMarkdownContainer"] p {
-        color: #FFFFFF !important;
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked) div[data-testid="stMarkdownContainer"] p,
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label[aria-checked="true"] div[data-testid="stMarkdownContainer"] p,
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] span,
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked) span,
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] p,
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked) p {
+        color: #1E3A5F !important;
         font-weight: 700 !important;
     }
     
     /* Standard Action Buttons */
     div.stButton > button, div[data-testid="stFormSubmitButton"] > button {
-        background: linear-gradient(135deg, #18181B 0%, #09090B 100%) !important;
+        background: #1E3A5F !important;
         color: #FFFFFF !important;
-        border: 1px solid #3F3F46 !important;
-        border-radius: 5px !important;
+        border: 1px solid #1E3A5F !important;
+        border-radius: 6px !important;
         font-weight: 600 !important;
         font-size: 13px !important;
         padding: 8px 20px !important;
         transition: all 0.2s ease !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
     }
     div.stButton > button:hover, div[data-testid="stFormSubmitButton"] > button:hover {
-        background: #27272A !important;
-        border-color: #52525B !important;
+        background: #2A4D7C !important;
+        border-color: #2A4D7C !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 2px 6px rgba(30, 58, 95, 0.25) !important;
+    }
+    div.stButton > button:active, div[data-testid="stFormSubmitButton"] > button:active {
+        background: #152840 !important;
     }
     
     /* Download Buttons */
     div.stDownloadButton > button {
         background: #FFFFFF !important;
-        color: #0F172A !important;
+        color: #1E3A5F !important;
         border: 1px solid #CBD5E1 !important;
-        border-radius: 5px !important;
+        border-radius: 6px !important;
         font-weight: 600 !important;
         font-size: 12.5px !important;
         padding: 7px 16px !important;
+        transition: all 0.2s ease !important;
     }
     div.stDownloadButton > button:hover {
         background: #F1F5F9 !important;
-        border-color: #94A3B8 !important;
+        border-color: #1E3A5F !important;
+        color: #1E3A5F !important;
+    }
+    
+    /* Tabs Styling */
+    div[data-testid="stTabs"] button[role="tab"] {
+        color: #64748B !important;
+        font-weight: 600 !important;
+        font-size: 13px !important;
+        padding: 8px 16px !important;
+        border-bottom: 2px solid transparent !important;
+    }
+    div[data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
+        color: #1E3A5F !important;
+        border-bottom: 2px solid #1E3A5F !important;
+        font-weight: 700 !important;
+    }
+    
+    /* Form Inputs and Selectboxes */
+    label[data-testid="stWidgetLabel"] p {
+        color: #1E293B !important;
+        font-weight: 600 !important;
+        font-size: 12.5px !important;
     }
     
     /* Risk Meter Bar */
@@ -380,11 +437,11 @@ st.markdown("""
 
 # -----------------------------------------------------------------------------
 # CHART STYLING & PALETTE
-# Muted Blue for legitimate, Crimson Red for potential fraud, Ocean Cyan for volume
+# Navy Blue for legitimate, Crimson Red for potential fraud, Subtle Teal for volume
 # -----------------------------------------------------------------------------
-COLOR_LEGIT = "#2563EB"   # Sapphire Blue (Class 0 - Legitimate)
+COLOR_LEGIT = "#1E3A5F"   # Navy Blue (Class 0 - Legitimate)
 COLOR_FRAUD = "#DC2626"   # Crimson Red (Class 1 - Potential Fraud)
-COLOR_VOLUME = "#0284C7"  # Ocean Cyan (Total Volume)
+COLOR_VOLUME = "#0F766E"  # Subtle Teal Accent (Total Volume)
 COLOR_MUTED = "#64748B"   # Slate Grey
 
 def apply_chart_layout(fig, title: str = "", height: int = 300):
@@ -395,14 +452,14 @@ def apply_chart_layout(fig, title: str = "", height: int = 300):
             "x": 0.02,
             "xanchor": "left",
             "yanchor": "top",
-            "font": {"size": 13, "color": "#0F172A", "family": "Segoe UI", "weight": "bold"}
+            "font": {"size": 13, "color": "#1E293B", "family": "Segoe UI", "weight": "bold"}
         },
         margin={"l": 35, "r": 20, "t": 40, "b": 35},
         height=height,
         paper_bgcolor="#FFFFFF",
         plot_bgcolor="#FFFFFF",
-        font={"family": "Segoe UI", "size": 11, "color": "#475569"},
-        hoverlabel={"bgcolor": "#0F172A", "font_size": 12, "font_family": "Segoe UI"},
+        font={"family": "Segoe UI", "size": 11, "color": "#64748B"},
+        hoverlabel={"bgcolor": "#1E293B", "font_size": 12, "font_family": "Segoe UI", "font_color": "#FFFFFF"},
         legend={
             "orientation": "h",
             "yanchor": "bottom",
@@ -456,14 +513,14 @@ except Exception as e:
 # -----------------------------------------------------------------------------
 with st.sidebar:
     st.markdown("""
-    <div style="padding: 10px 4px 16px 4px; border-bottom: 1px solid #27272A;">
+    <div style="padding: 8px 4px 14px 4px; border-bottom: 1px solid #E2E8F0;">
         <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 34px; height: 34px; background: #18181B; border: 1px solid #3F3F46; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #F59E0B; font-weight: 800;">
+            <div style="width: 34px; height: 34px; background: #EBF2FE; border: 1px solid #BFDBFE; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #1E3A5F; font-weight: 800;">
                 📊
             </div>
             <div>
-                <div style="font-size: 14px; font-weight: 700; color: #FFFFFF;">FRAUD SYSTEM</div>
-                <div style="font-size: 10.5px; color: #94A3B8;">Academic Prototype</div>
+                <div style="font-size: 14px; font-weight: 700; color: #1E293B; letter-spacing: -0.01em;">FRAUD SYSTEM</div>
+                <div style="font-size: 10.5px; color: #64748B; font-weight: 500;">Academic Prototype</div>
             </div>
         </div>
     </div>
@@ -491,28 +548,28 @@ with st.sidebar:
     st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
     
     st.markdown("""
-    <div style="background: #18181B; border-radius: 6px; padding: 12px; border: 1px solid #27272A; font-size: 11px;">
-        <div style="font-weight: 700; color: #F4F4F5; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-            <span style="color: #FFFFFF;">SYSTEM TELEMETRY</span>
-            <span style="background: rgba(16, 185, 129, 0.15); color: #10B981; padding: 2px 6px; border-radius: 3px; font-size: 9.5px; font-weight: 700;">ACTIVE</span>
+    <div style="background: #F8FAFC; border-radius: 6px; padding: 12px; border: 1px solid #E2E8F0; font-size: 11px;">
+        <div style="font-weight: 700; color: #1E293B; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: #1E293B; font-size: 10.5px; letter-spacing: 0.04em;">SYSTEM TELEMETRY</span>
+            <span style="background: rgba(15, 118, 110, 0.10); color: #0F766E; border: 1px solid rgba(15, 118, 110, 0.25); padding: 2px 7px; border-radius: 3px; font-size: 9.5px; font-weight: 700; letter-spacing: 0.03em;">ACTIVE</span>
         </div>
-        <div style="color: #94A3B8; margin-bottom: 4px; display: flex; justify-content: space-between;">
+        <div style="color: #64748B; margin-bottom: 5px; display: flex; justify-content: space-between;">
             <span>Dataset</span>
-            <span style="color: #FFFFFF; font-weight: 600;">50,000 Records</span>
+            <span style="color: #1E293B; font-weight: 600;">50,000 Records</span>
         </div>
-        <div style="color: #94A3B8; margin-bottom: 4px; display: flex; justify-content: space-between;">
+        <div style="color: #64748B; margin-bottom: 5px; display: flex; justify-content: space-between;">
             <span>Classifier</span>
-            <span style="color: #FFFFFF; font-weight: 600;">Decision Tree (D12)</span>
+            <span style="color: #1E293B; font-weight: 600;">Decision Tree (D12)</span>
         </div>
-        <div style="color: #94A3B8; margin-bottom: 4px; display: flex; justify-content: space-between;">
+        <div style="color: #64748B; margin-bottom: 5px; display: flex; justify-content: space-between;">
             <span>Features</span>
-            <span style="color: #FFFFFF; font-weight: 600;">12 Pipeline Inputs</span>
+            <span style="color: #1E293B; font-weight: 600;">12 Pipeline Inputs</span>
         </div>
-        <div style="color: #94A3B8; margin-bottom: 4px; display: flex; justify-content: space-between;">
+        <div style="color: #64748B; margin-bottom: 5px; display: flex; justify-content: space-between;">
             <span>Currency</span>
-            <span style="color: #F4F4F5; font-weight: 600;">₹ INR</span>
+            <span style="color: #1E293B; font-weight: 600;">₹ INR</span>
         </div>
-        <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #27272A; color: #64748B; font-size: 10px; text-align: center;">
+        <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #E2E8F0; color: #64748B; font-size: 10px; text-align: center;">
             Synthetic Benchmark Evaluation
         </div>
     </div>
@@ -643,8 +700,8 @@ if selected_nav == "📊 Overview":
     
     # Context Box
     st.markdown(f"""
-    <div class='app-card-box' style='padding: 10px 16px; margin-bottom: 16px; background: #FFFFFF; border-left: 4px solid #18181B;'>
-        <div style='font-size: 12.5px; color: #334155;'>
+    <div class='app-card-box' style='padding: 10px 16px; margin-bottom: 16px; background: #FFFFFF; border-left: 4px solid #0F766E;'>
+        <div style='font-size: 12.5px; color: #1E293B;'>
             <strong>Dataset Date Range:</strong> 01 Jan 2023 to 31 Dec 2023 | 
             <strong>Total Volume:</strong> ₹{kpis['total_value']:,.2f} | 
             <strong>Model:</strong> Decision Tree (max_depth=12, balanced) evaluating 12 behavioural and temporal features.
@@ -713,7 +770,7 @@ if selected_nav == "📊 Overview":
             text=f"<b>{kpis['fraud_percentage']:.1f}%</b><br><span style='font-size:10px;color:#64748B;'>Fraud Rate</span>",
             x=0.5, y=0.5,
             font_size=14,
-            font_color="#0F172A",
+            font_color="#1E293B",
             showarrow=False
         )
         apply_chart_layout(fig_pie, height=290)
@@ -1487,7 +1544,7 @@ elif selected_nav == "🏆 Model Performance & Audit":
         y="Score",
         color="Model",
         barmode="group",
-        color_discrete_sequence=["#64748B", "#2563EB", "#10B981", "#8B5CF6"]
+        color_discrete_sequence=["#64748B", "#1E3A5F", "#0F766E", "#94A3B8"]
     )
     apply_chart_layout(fig_comp, title="Validation Set Metrics Across Architectures", height=280)
     fig_comp.update_yaxes(range=[0, 1])
