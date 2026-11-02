@@ -34,7 +34,7 @@ from src.data_loader import (
 # -----------------------------------------------------------------------------
 st.set_page_config(
     page_title="Financial Fraud Detection System — Academic Prototype & Risk Analytics",
-    page_icon="📊",
+    page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -56,34 +56,44 @@ def format_inr_lakhs(val: float) -> str:
         return f"₹{val:,.2f}"
 
 # -----------------------------------------------------------------------------
-# STYLING (PROFESSIONAL LIGHT THEME, WHITE SIDEBAR, RECTANGULAR KPI TILES)
+# VISUAL THEME & PALETTE CONSTANTS
+# -----------------------------------------------------------------------------
+COLOR_PRIMARY = "#2563EB"   # Professional Blue (General volume / metrics)
+COLOR_LEGIT = "#16A34A"     # Restrained Green (Class 0 - Legitimate)
+COLOR_FRAUD = "#DC2626"     # Restrained Red (Class 1 - Potential Fraud)
+COLOR_AMBER = "#D97706"     # Restrained Amber (Medium Risk)
+COLOR_MUTED = "#64748B"     # Slate Grey (Baseline / Secondary)
+COLOR_NAVY = "#0F172A"      # Dark Navy (Headings)
+
+# -----------------------------------------------------------------------------
+# STYLING (COHESIVE LIGHT ANALYTICS THEME & COMPACT NAVIGATION)
 # -----------------------------------------------------------------------------
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     
     html, body, [class*="css"] {
-        font-family: 'Segoe UI', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-        color: #1E293B;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        color: #334155;
         letter-spacing: -0.01em;
     }
     
     /* Main Canvas Background */
     .stApp {
-        background-color: #F5F7FB !important;
+        background-color: #F8FAFC !important;
     }
     
     /* Top Ribbon */
     .app-top-ribbon {
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
-        padding: 8px 18px;
+        padding: 8px 16px;
         margin-top: -3.5rem;
-        margin-bottom: 14px;
+        margin-bottom: 16px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
         border-radius: 6px;
     }
     .ribbon-left {
@@ -95,17 +105,17 @@ st.markdown("""
         display: flex;
         align-items: center;
         gap: 8px;
-        font-weight: 700;
+        font-weight: 600;
         font-size: 13.5px;
-        color: #1E293B;
+        color: #0F172A;
     }
     .ribbon-badge {
-        background: #1E3A5F;
+        background: #2563EB;
         color: #FFFFFF;
         font-weight: 700;
-        padding: 3px 8px;
+        padding: 2px 7px;
         border-radius: 4px;
-        font-size: 11px;
+        font-size: 10.5px;
         letter-spacing: 0.03em;
     }
     .ribbon-right {
@@ -118,89 +128,87 @@ st.markdown("""
     .ribbon-tag {
         background: #F8FAFC;
         border: 1px solid #E2E8F0;
-        color: #475569;
-        padding: 3px 9px;
-        border-radius: 12px;
-        font-weight: 600;
-        font-size: 10.5px;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        color: #334155;
     }
     
-    /* Professional Light Header Banner */
+    /* Page Header Banner */
     .app-header-banner {
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
-        border-left: 4px solid #1E3A5F;
         border-radius: 6px;
-        padding: 16px 22px;
-        margin-bottom: 16px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        padding: 14px 18px;
+        margin-bottom: 14px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
     }
     .app-brand {
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 12px;
     }
     .app-logo-tile {
-        width: 42px;
-        height: 42px;
-        background: #F0FDFA;
-        border: 1px solid #CCFBF1;
+        width: 36px;
+        height: 36px;
+        background: #EFF6FF;
+        border: 1px solid #BFDBFE;
         border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 20px;
-        color: #0F766E;
-        font-weight: 800;
+        font-size: 18px;
+        color: #2563EB;
+        font-weight: 700;
     }
     .app-title-box h1 {
-        color: #1E293B !important;
-        font-size: 18.5px;
+        color: #0F172A !important;
+        font-size: 17.5px;
         font-weight: 700;
         margin: 0;
         letter-spacing: -0.01em;
     }
     .app-title-box p {
         color: #64748B !important;
-        font-size: 12.5px;
-        margin-top: 3px;
+        font-size: 12px;
+        margin-top: 2px;
         margin-bottom: 0;
     }
     .app-pill {
         background: #F8FAFC;
         border: 1px solid #E2E8F0;
-        color: #1E3A5F;
-        padding: 5px 12px;
-        border-radius: 16px;
+        color: #1E40AF;
+        padding: 4px 10px;
+        border-radius: 14px;
         font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.03em;
+        font-weight: 600;
+        letter-spacing: 0.02em;
     }
     
-    /* Visual Container */
+    /* Content Cards */
     .app-card-box {
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
         border-radius: 6px;
-        padding: 16px 20px;
-        margin-bottom: 18px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        padding: 16px 18px;
+        margin-bottom: 14px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
     }
     .app-card-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 12px;
-        padding-bottom: 8px;
+        margin-bottom: 10px;
+        padding-bottom: 6px;
         border-bottom: 1px solid #F1F5F9;
     }
     .app-card-title {
         font-size: 13.5px;
-        font-weight: 700;
-        color: #1E293B;
+        font-weight: 600;
+        color: #0F172A;
     }
     .app-card-sub {
         font-size: 11.5px;
@@ -212,8 +220,8 @@ st.markdown("""
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
         border-radius: 6px;
-        padding: 15px 18px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        padding: 13px 15px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
         position: relative;
         overflow: hidden;
         height: 100%;
@@ -228,33 +236,42 @@ st.markdown("""
         left: 0;
         right: 0;
         height: 3px;
-        background: #1E3A5F;
+        background: #2563EB;
+    }
+    .app-kpi-card.kpi-legit::before {
+        background: #16A34A;
+    }
+    .app-kpi-card.kpi-fraud::before {
+        background: #DC2626;
+    }
+    .app-kpi-card.kpi-amber::before {
+        background: #D97706;
     }
     .app-kpi-label {
-        font-size: 11px;
-        font-weight: 700;
+        font-size: 10.5px;
+        font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.04em;
         color: #64748B;
-        margin-bottom: 6px;
+        margin-bottom: 4px;
     }
     .app-kpi-val {
-        font-size: 23px;
-        font-weight: 800;
-        color: #1E293B;
+        font-size: 22px;
+        font-weight: 700;
+        color: #0F172A;
         line-height: 1.15;
     }
     .app-kpi-footer {
-        margin-top: 8px;
+        margin-top: 6px;
         display: flex;
         align-items: center;
         gap: 6px;
-        font-size: 11.5px;
+        font-size: 11px;
         color: #64748B;
     }
     .app-tag-neutral {
         display: inline-block;
-        padding: 2px 6px;
+        padding: 1px 5px;
         border-radius: 3px;
         font-weight: 600;
         font-size: 10px;
@@ -264,187 +281,201 @@ st.markdown("""
     }
     .app-tag-accent {
         display: inline-block;
-        padding: 2px 6px;
+        padding: 1px 5px;
         border-radius: 3px;
         font-weight: 600;
         font-size: 10px;
-        background: #F0FDFA;
-        color: #0F766E;
-        border: 1px solid #CCFBF1;
+        background: #EFF6FF;
+        color: #1D4ED8;
+        border: 1px solid #BFDBFE;
+    }
+    .app-tag-legit {
+        display: inline-block;
+        padding: 1px 5px;
+        border-radius: 3px;
+        font-weight: 600;
+        font-size: 10px;
+        background: #F0FDF4;
+        color: #15803D;
+        border: 1px solid #BBF7D0;
+    }
+    .app-tag-fraud {
+        display: inline-block;
+        padding: 1px 5px;
+        border-radius: 3px;
+        font-weight: 600;
+        font-size: 10px;
+        background: #FEF2F2;
+        color: #B91C1C;
+        border: 1px solid #FECACA;
     }
     
-    /* Professional Light Sidebar */
+    /* Clean Professional Sidebar */
     section[data-testid="stSidebar"] {
         background-color: #FFFFFF !important;
         border-right: 1px solid #E2E8F0 !important;
     }
     section[data-testid="stSidebar"] > div {
         background-color: #FFFFFF !important;
+        padding-top: 1rem !important;
     }
     section[data-testid="stSidebar"] div[data-testid="stSidebarUserContent"] {
         background-color: #FFFFFF !important;
     }
-    section[data-testid="stSidebar"] h1, 
-    section[data-testid="stSidebar"] h2, 
-    section[data-testid="stSidebar"] h3 {
-        color: #1E293B !important;
-    }
-    section[data-testid="stSidebar"] p, 
-    section[data-testid="stSidebar"] span {
-        color: #1E293B;
-    }
     
     /* Custom Sidebar Radio Navigation */
     section[data-testid="stSidebar"] div[data-testid="stRadioCircle"],
-    section[data-testid="stSidebar"] div[data-testid="stRadio"] > div > div > label > div:first-child {
-        display: none !important;
-    }
-    section[data-testid="stSidebar"] input[type="radio"] {
+    section[data-testid="stSidebar"] input[type="radio"],
+    section[data-testid="stSidebar"] div[data-testid="stRadio"] > div > div > label > div:first-child:not([data-testid="stMarkdownContainer"]) {
         display: none !important;
     }
     section[data-testid="stSidebar"] div[role="radiogroup"] {
         display: flex !important;
         flex-direction: column !important;
-        gap: 6px !important;
-        padding: 4px 0 !important;
+        gap: 3px !important;
+        padding: 2px 0 !important;
     }
     section[data-testid="stSidebar"] div[role="radiogroup"] > label {
         display: flex !important;
         align-items: center !important;
         background: #FFFFFF !important;
-        border: 1px solid #E2E8F0 !important;
-        border-left: 4px solid transparent !important;
+        border: 1px solid transparent !important;
+        border-left: 3px solid transparent !important;
         border-radius: 6px !important;
-        padding: 9px 12px !important;
+        padding: 8px 11px !important;
         margin: 0 !important;
         cursor: pointer !important;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
-        transition: all 0.18s ease-in-out !important;
+        transition: all 0.15s ease-in-out !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
     section[data-testid="stSidebar"] div[role="radiogroup"] > label div[data-testid="stMarkdownContainer"] p,
     section[data-testid="stSidebar"] div[role="radiogroup"] > label span,
     section[data-testid="stSidebar"] div[role="radiogroup"] > label p {
-        color: #1E293B !important;
-        font-weight: 600 !important;
+        color: #334155 !important;
+        font-weight: 500 !important;
         font-size: 12.5px !important;
         margin: 0 !important;
+        line-height: 1.35 !important;
     }
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover {
         background: #F8FAFC !important;
-        border-color: #CBD5E1 !important;
-        border-left: 4px solid #94A3B8 !important;
+        border-color: #E2E8F0 !important;
+        border-left: 3px solid #94A3B8 !important;
     }
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover div[data-testid="stMarkdownContainer"] p,
-    section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover span,
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover p {
-        color: #1E3A5F !important;
+        color: #0F172A !important;
     }
+    
+    /* Selected Radio Navigation Item (Restrained Blue Highlight) */
     section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"],
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked),
     section[data-testid="stSidebar"] div[role="radiogroup"] > label[aria-checked="true"] {
-        background: #F0FDFA !important;
-        border: 1px solid #CCFBF1 !important;
-        border-left: 5px solid #0F766E !important;
-        box-shadow: 0 1px 3px rgba(15, 118, 110, 0.10) !important;
+        background: #EFF6FF !important;
+        border: 1px solid #BFDBFE !important;
+        border-left: 3px solid #2563EB !important;
+        box-shadow: 0 1px 2px rgba(37, 99, 235, 0.08) !important;
     }
     section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] div[data-testid="stMarkdownContainer"] p,
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked) div[data-testid="stMarkdownContainer"] p,
     section[data-testid="stSidebar"] div[role="radiogroup"] > label[aria-checked="true"] div[data-testid="stMarkdownContainer"] p,
-    section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] span,
-    section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked) span,
     section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] p,
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked) p {
-        color: #0F766E !important;
-        font-weight: 700 !important;
+        color: #1D4ED8 !important;
+        font-weight: 600 !important;
     }
     
-    /* Standard Action Buttons */
+    /* Primary Buttons */
     div.stButton > button, div[data-testid="stFormSubmitButton"] > button {
-        background: #1E3A5F !important;
+        background: #2563EB !important;
         color: #FFFFFF !important;
-        border: 1px solid #1E3A5F !important;
+        border: 1px solid #2563EB !important;
         border-radius: 6px !important;
         font-weight: 600 !important;
-        font-size: 13px !important;
-        padding: 8px 20px !important;
-        transition: all 0.2s ease !important;
+        font-size: 12.5px !important;
+        padding: 7px 18px !important;
+        transition: all 0.15s ease !important;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
     }
     div.stButton > button:hover, div[data-testid="stFormSubmitButton"] > button:hover {
-        background: #2A4D7C !important;
-        border-color: #2A4D7C !important;
+        background: #1D4ED8 !important;
+        border-color: #1D4ED8 !important;
         color: #FFFFFF !important;
-        box-shadow: 0 2px 6px rgba(30, 58, 95, 0.25) !important;
-    }
-    div.stButton > button:active, div[data-testid="stFormSubmitButton"] > button:active {
-        background: #152840 !important;
     }
     
     /* Download Buttons */
     div.stDownloadButton > button {
         background: #FFFFFF !important;
-        color: #1E3A5F !important;
-        border: 1px solid #CBD5E1 !important;
+        color: #2563EB !important;
+        border: 1px solid #BFDBFE !important;
         border-radius: 6px !important;
         font-weight: 600 !important;
         font-size: 12.5px !important;
         padding: 7px 16px !important;
-        transition: all 0.2s ease !important;
+        transition: all 0.15s ease !important;
     }
     div.stDownloadButton > button:hover {
-        background: #F1F5F9 !important;
-        border-color: #1E3A5F !important;
-        color: #1E3A5F !important;
+        background: #EFF6FF !important;
+        border-color: #2563EB !important;
+        color: #1D4ED8 !important;
     }
     
     /* Tabs Styling */
     div[data-testid="stTabs"] button[role="tab"] {
         color: #64748B !important;
-        font-weight: 600 !important;
-        font-size: 13px !important;
-        padding: 8px 16px !important;
+        font-weight: 500 !important;
+        font-size: 12.5px !important;
+        padding: 8px 14px !important;
         border-bottom: 2px solid transparent !important;
     }
     div[data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
-        color: #0F766E !important;
-        border-bottom: 2px solid #0F766E !important;
-        font-weight: 700 !important;
+        color: #2563EB !important;
+        border-bottom: 2px solid #2563EB !important;
+        font-weight: 600 !important;
     }
     
     /* Form Inputs and Selectboxes */
     label[data-testid="stWidgetLabel"] p {
-        color: #1E293B !important;
+        color: #0F172A !important;
         font-weight: 600 !important;
-        font-size: 12.5px !important;
+        font-size: 12px !important;
     }
     
     /* Risk Meter Bar */
     .risk-meter {
         width: 100%;
-        height: 10px;
+        height: 8px;
         background: #E2E8F0;
-        border-radius: 5px;
+        border-radius: 4px;
         overflow: hidden;
         margin: 8px 0 6px 0;
     }
     .risk-meter-fill {
         height: 100%;
-        border-radius: 5px;
-        transition: width 0.4s ease;
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+    
+    /* Transparency Callout */
+    .prototype-disclaimer {
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-left: 3px solid #2563EB;
+        padding: 10px 14px;
+        border-radius: 4px;
+        font-size: 11.5px;
+        color: #475569;
+        margin-bottom: 14px;
+        line-height: 1.5;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# CHART STYLING & PALETTE
-# Navy Blue for legitimate, Crimson Red for potential fraud, Subtle Teal for volume
+# CHART LAYOUT HELPER (POLISHED & RESTRAINED)
 # -----------------------------------------------------------------------------
-COLOR_LEGIT = "#1E3A5F"   # Navy Blue (Class 0 - Legitimate)
-COLOR_FRAUD = "#DC2626"   # Crimson Red (Class 1 - Potential Fraud)
-COLOR_VOLUME = "#0F766E"  # Subtle Teal Accent (Total Volume)
-COLOR_MUTED = "#64748B"   # Slate Grey
-
-def apply_chart_layout(fig, title: str = "", height: int = 300):
+def apply_chart_layout(fig, title: str = "", height: int = 280):
     fig.update_layout(
         title={
             "text": title,
@@ -452,21 +483,21 @@ def apply_chart_layout(fig, title: str = "", height: int = 300):
             "x": 0.02,
             "xanchor": "left",
             "yanchor": "top",
-            "font": {"size": 13, "color": "#1E293B", "family": "Segoe UI", "weight": "bold"}
+            "font": {"size": 12.5, "color": COLOR_NAVY, "family": "Inter, Segoe UI, sans-serif", "weight": "bold"}
         },
-        margin={"l": 35, "r": 20, "t": 40, "b": 35},
+        margin={"l": 35, "r": 20, "t": 35 if title else 20, "b": 35},
         height=height,
         paper_bgcolor="#FFFFFF",
         plot_bgcolor="#FFFFFF",
-        font={"family": "Segoe UI", "size": 11, "color": "#64748B"},
-        hoverlabel={"bgcolor": "#1E293B", "font_size": 12, "font_family": "Segoe UI", "font_color": "#FFFFFF"},
+        font={"family": "Inter, Segoe UI, sans-serif", "size": 11, "color": COLOR_MUTED},
+        hoverlabel={"bgcolor": COLOR_NAVY, "font_size": 11, "font_family": "Inter, Segoe UI, sans-serif", "font_color": "#FFFFFF"},
         legend={
             "orientation": "h",
             "yanchor": "bottom",
             "y": 1.02,
             "xanchor": "right",
             "x": 1,
-            "font": {"size": 11, "color": "#64748B"}
+            "font": {"size": 10.5, "color": COLOR_MUTED}
         }
     )
     fig.update_xaxes(
@@ -474,14 +505,14 @@ def apply_chart_layout(fig, title: str = "", height: int = 300):
         gridwidth=1,
         gridcolor="#F1F5F9",
         zeroline=False,
-        tickfont={"size": 10.5, "color": "#64748B"}
+        tickfont={"size": 10, "color": COLOR_MUTED}
     )
     fig.update_yaxes(
         showgrid=True,
         gridwidth=1,
         gridcolor="#F1F5F9",
         zeroline=False,
-        tickfont={"size": 10.5, "color": "#64748B"}
+        tickfont={"size": 10, "color": COLOR_MUTED}
     )
     return fig
 
@@ -509,24 +540,22 @@ except Exception as e:
     st.stop()
 
 # -----------------------------------------------------------------------------
-# SIDEBAR NAVIGATION
+# SIDEBAR NAVIGATION (REDESIGNED & COMPACT)
 # -----------------------------------------------------------------------------
 with st.sidebar:
     st.markdown("""
-    <div style="padding: 8px 4px 14px 4px; border-bottom: 1px solid #E2E8F0;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 34px; height: 34px; background: #F0FDFA; border: 1px solid #CCFBF1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #0F766E; font-weight: 800;">
-                📊
+    <div style="padding: 2px 2px 10px 2px; border-bottom: 1px solid #E2E8F0; margin-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 9px;">
+            <div style="width: 32px; height: 32px; background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 15px; color: #2563EB; font-weight: 700; flex-shrink: 0;">
+                🛡️
             </div>
-            <div>
-                <div style="font-size: 14px; font-weight: 700; color: #1E293B; letter-spacing: -0.01em;">FRAUD SYSTEM</div>
+            <div style="overflow: hidden;">
+                <div style="font-size: 13.5px; font-weight: 700; color: #0F172A; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">FRAUD DETECTION</div>
                 <div style="font-size: 10.5px; color: #64748B; font-weight: 500;">Academic Prototype</div>
             </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
-    
-    st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
     
     nav_pages = [
         "📊 Overview",
@@ -545,35 +574,33 @@ with st.sidebar:
         label_visibility="collapsed"
     )
     
-    st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
-    
     st.markdown("""
-    <div style="background: #F8FAFC; border-radius: 6px; padding: 12px; border: 1px solid #E2E8F0; font-size: 11px;">
-        <div style="font-weight: 700; color: #1E293B; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-            <span style="color: #1E293B; font-size: 10.5px; letter-spacing: 0.04em;">SYSTEM TELEMETRY</span>
-            <span style="background: rgba(15, 118, 110, 0.10); color: #0F766E; border: 1px solid rgba(15, 118, 110, 0.25); padding: 2px 7px; border-radius: 3px; font-size: 9.5px; font-weight: 700; letter-spacing: 0.03em;">ACTIVE</span>
+    <div style="background: #F8FAFC; border-radius: 6px; padding: 11px; border: 1px solid #E2E8F0; font-size: 11px; margin-top: 14px;">
+        <div style="font-weight: 700; color: #0F172A; margin-bottom: 7px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="letter-spacing: 0.04em;">SYSTEM TELEMETRY</span>
+            <span style="background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; padding: 1px 6px; border-radius: 3px; font-size: 9.5px; font-weight: 700;">ACTIVE</span>
         </div>
-        <div style="color: #64748B; margin-bottom: 5px; display: flex; justify-content: space-between;">
+        <div style="color: #64748B; margin-bottom: 4px; display: flex; justify-content: space-between;">
             <span>Dataset</span>
-            <span style="color: #1E293B; font-weight: 600;">50,000 Records</span>
+            <span style="color: #0F172A; font-weight: 600;">50,000 Records</span>
         </div>
-        <div style="color: #64748B; margin-bottom: 5px; display: flex; justify-content: space-between;">
+        <div style="color: #64748B; margin-bottom: 4px; display: flex; justify-content: space-between;">
             <span>Classifier</span>
-            <span style="color: #1E293B; font-weight: 600;">Decision Tree (D12)</span>
+            <span style="color: #0F172A; font-weight: 600;">Decision Tree (D12)</span>
         </div>
-        <div style="color: #64748B; margin-bottom: 5px; display: flex; justify-content: space-between;">
+        <div style="color: #64748B; margin-bottom: 4px; display: flex; justify-content: space-between;">
             <span>Features</span>
-            <span style="color: #1E293B; font-weight: 600;">12 Pipeline Inputs</span>
+            <span style="color: #0F172A; font-weight: 600;">12 Pipeline Inputs</span>
         </div>
-        <div style="color: #64748B; margin-bottom: 5px; display: flex; justify-content: space-between;">
+        <div style="color: #64748B; margin-bottom: 4px; display: flex; justify-content: space-between;">
             <span>Currency</span>
-            <span style="color: #1E293B; font-weight: 600;">₹ INR</span>
+            <span style="color: #0F172A; font-weight: 600;">₹ INR</span>
         </div>
-        <div style="color: #64748B; margin-bottom: 5px; display: flex; justify-content: space-between;">
-            <span>Deployment</span>
-            <span style="color: #0F766E; font-weight: 700;">Light Theme v1.2</span>
+        <div style="color: #64748B; margin-bottom: 4px; display: flex; justify-content: space-between;">
+            <span>UI Theme</span>
+            <span style="color: #2563EB; font-weight: 600;">Light Analytics</span>
         </div>
-        <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #E2E8F0; color: #64748B; font-size: 10px; text-align: center;">
+        <div style="margin-top: 6px; padding-top: 5px; border-top: 1px solid #E2E8F0; color: #64748B; font-size: 10px; text-align: center;">
             Synthetic Benchmark Evaluation
         </div>
     </div>
@@ -584,14 +611,14 @@ st.markdown("""
 <div class="app-top-ribbon">
     <div class="ribbon-left">
         <div class="ribbon-logo">
-            <span class="ribbon-badge">AI/ML</span>
+            <span class="ribbon-badge">AI / ML</span>
             <span>Financial Fraud Detection System</span>
         </div>
     </div>
     <div class="ribbon-right">
         <span>Dataset: <strong>synthetic_fraud_dataset1.csv</strong></span>
         <span class="ribbon-tag">₹ Indian Rupees (INR)</span>
-        <span class="ribbon-tag" style="color: #0F766E; font-weight: 700; border-color: #CCFBF1; background: #F0FDFA;">● Live v1.2</span>
+        <span class="ribbon-tag" style="color: #16A34A; font-weight: 600; border-color: #BBF7D0; background: #F0FDF4;">● System Live</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -606,7 +633,7 @@ if selected_nav == "📊 Overview":
             <div class="app-logo-tile">📊</div>
             <div class="app-title-box">
                 <h1>Financial Fraud Detection — Overview Dashboard</h1>
-                <p>Empirical statistics and exploratory analytics across 50,000 synthetic banking transactions (₹ INR).</p>
+                <p>Empirical statistics, temporal trends, and risk distributions across 50,000 banking transactions (₹ INR).</p>
             </div>
         </div>
         <div>
@@ -615,31 +642,46 @@ if selected_nav == "📊 Overview":
     </div>
     """, unsafe_allow_html=True)
     
-    # Slicer Controls
+    # Slicer Controls with Date Range Filter
     st.markdown("<div class='app-card-box' style='padding: 12px 18px; margin-bottom: 14px;'>", unsafe_allow_html=True)
-    f_col1, f_col2, f_col3 = st.columns(3)
+    f_col1, f_col2, f_col3, f_col4 = st.columns([1.5, 1, 1, 1])
+    
+    min_date_val = df_raw["Date"].min().date()
+    max_date_val = df_raw["Date"].max().date()
+    
     with f_col1:
+        date_selection = st.date_input(
+            "Date Range Filter",
+            value=(min_date_val, max_date_val),
+            min_value=min_date_val,
+            max_value=max_date_val
+        )
+    with f_col2:
         cat_filter = st.selectbox(
-            "Merchant Category Filter",
+            "Merchant Category",
             options=["All Categories"] + sorted(df_raw["Merchant_Category"].unique().tolist()),
             index=0
         )
-    with f_col2:
+    with f_col3:
         type_filter = st.selectbox(
-            "Transaction Type Filter",
+            "Transaction Type",
             options=["All Types"] + sorted(df_raw["Transaction_Type"].unique().tolist()),
             index=0
         )
-    with f_col3:
+    with f_col4:
         loc_filter = st.selectbox(
-            "Location Filter",
+            "Location",
             options=["All Locations"] + sorted(df_raw["Location"].unique().tolist()),
             index=0
         )
     st.markdown("</div>", unsafe_allow_html=True)
     
-    # Apply Filters
+    # Apply Filters (including Date Range)
     filtered_df = df_raw.copy()
+    if isinstance(date_selection, (tuple, list)) and len(date_selection) == 2 and date_selection[0] and date_selection[1]:
+        start_d, end_d = date_selection
+        filtered_df = filtered_df[(filtered_df["Date"].dt.date >= start_d) & (filtered_df["Date"].dt.date <= end_d)]
+    
     if cat_filter != "All Categories":
         filtered_df = filtered_df[filtered_df["Merchant_Category"] == cat_filter]
     if type_filter != "All Types":
@@ -661,24 +703,24 @@ if selected_nav == "📊 Overview":
         """, unsafe_allow_html=True)
     with k2:
         st.markdown(f"""
-        <div class="app-kpi-card">
+        <div class="app-kpi-card kpi-legit">
             <div class="app-kpi-label">LEGITIMATE (CLASS 0)</div>
             <div class="app-kpi-val">{kpis['non_fraud_transactions']:,}</div>
-            <div class="app-kpi-footer"><span class="app-tag-neutral">{kpis['non_fraud_percentage']:.2f}%</span><span>Non-fraud</span></div>
+            <div class="app-kpi-footer"><span class="app-tag-legit">{kpis['non_fraud_percentage']:.2f}%</span><span>Non-fraud</span></div>
         </div>
         """, unsafe_allow_html=True)
     with k3:
         st.markdown(f"""
-        <div class="app-kpi-card">
+        <div class="app-kpi-card kpi-fraud">
             <div class="app-kpi-label">FRAUD-LABELLED (CLASS 1)</div>
             <div class="app-kpi-val">{kpis['fraud_transactions']:,}</div>
-            <div class="app-kpi-footer"><span class="app-tag-neutral">{kpis['fraud_percentage']:.2f}%</span><span>Fraud label</span></div>
+            <div class="app-kpi-footer"><span class="app-tag-fraud">{kpis['fraud_percentage']:.2f}%</span><span>Observed rate</span></div>
         </div>
         """, unsafe_allow_html=True)
     with k4:
         st.markdown(f"""
         <div class="app-kpi-card">
-            <div class="app-kpi-label">TOTAL AMOUNT (INR)</div>
+            <div class="app-kpi-label">TOTAL VOLUME (INR)</div>
             <div class="app-kpi-val">{format_inr_lakhs(kpis['total_value'])}</div>
             <div class="app-kpi-footer"><span class="app-tag-neutral">Sum</span><span>₹{kpis['total_value']:,.0f}</span></div>
         </div>
@@ -696,30 +738,38 @@ if selected_nav == "📊 Overview":
         <div class="app-kpi-card">
             <div class="app-kpi-label">MODEL TEST RECALL</div>
             <div class="app-kpi-val">50.12%</div>
-            <div class="app-kpi-footer"><span class="app-tag-accent">Decision Tree</span><span>Sensitivity</span></div>
+            <div class="app-kpi-footer"><span class="app-tag-accent">Decision Tree</span><span>Held-out split</span></div>
         </div>
         """, unsafe_allow_html=True)
         
-    st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
     
-    # Context Box
+    # Model Risk Calibration & Summary Banner
     st.markdown(f"""
-    <div class='app-card-box' style='padding: 10px 16px; margin-bottom: 16px; background: #FFFFFF; border-left: 4px solid #0F766E;'>
-        <div style='font-size: 12.5px; color: #1E293B;'>
-            <strong>Dataset Date Range:</strong> 01 Jan 2023 to 31 Dec 2023 | 
-            <strong>Total Volume:</strong> ₹{kpis['total_value']:,.2f} | 
-            <strong>Model:</strong> Decision Tree (max_depth=12, balanced) evaluating 12 behavioural and temporal features.
+    <div class='prototype-disclaimer'>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px;">
+            <div>
+                <strong style="color: #0F172A;">Model Risk Calibration & Governance:</strong>
+                Transactions are categorized into 3 calibrated tiers based on estimated probability:
+                <span class="app-tag-fraud">High Risk (≥65%)</span>,
+                <span class="app-tag-neutral" style="background: #FFFBEB; border-color: #FDE68A; color: #B45309;">Medium Risk (40–65%)</span>, and
+                <span class="app-tag-legit">Low Risk (&lt;40%)</span>.
+                Default binary decision threshold: <strong>0.50</strong>.
+            </div>
+            <div>
+                <span style="font-size: 10.5px; color: #64748B;">Academic Prototype • Synthetic Benchmark</span>
+            </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    # Row 1: Charts
+    # Row 1: Charts (Monthly Volume Breakdown & Fraud Rate Trend)
     c1, c2 = st.columns(2)
     with c1:
         st.markdown("""
         <div class='app-card-box'>
             <div class='app-card-header'>
-                <div class='app-card-title'>Monthly Transaction Trends</div>
+                <div class='app-card-title'>Monthly Transaction Volume Trends</div>
             </div>
             <div class='app-card-sub'>Monthly volume breakdown by ground truth class (Legitimate vs Fraud-Labelled)</div>
         """, unsafe_allow_html=True)
@@ -745,7 +795,7 @@ if selected_nav == "📊 Overview":
             marker=dict(color=COLOR_FRAUD)
         ))
         fig_trend.update_layout(barmode="stack")
-        apply_chart_layout(fig_trend, height=290)
+        apply_chart_layout(fig_trend, height=280)
         st.plotly_chart(fig_trend, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
         
@@ -753,115 +803,140 @@ if selected_nav == "📊 Overview":
         st.markdown("""
         <div class='app-card-box'>
             <div class='app-card-header'>
+                <div class='app-card-title'>Observed Fraud Rate Trend Over Time</div>
+            </div>
+            <div class='app-card-sub'>Monthly observed fraud rate (%) vs annual population baseline (32.13%)</div>
+        """, unsafe_allow_html=True)
+        
+        monthly_trend = filtered_df.groupby("YearMonth").agg(
+            Total=("Fraud_Label", "count"),
+            Fraud=("Fraud_Label", lambda x: (x == 1).sum())
+        ).reset_index()
+        monthly_trend["Fraud_Rate"] = (monthly_trend["Fraud"] / monthly_trend["Total"] * 100.0).round(2)
+        
+        fig_fr = go.Figure()
+        fig_fr.add_trace(go.Scatter(
+            x=monthly_trend["YearMonth"],
+            y=[32.13] * len(monthly_trend),
+            mode="lines",
+            name="Annual Baseline (32.13%)",
+            line=dict(color=COLOR_MUTED, width=1.5, dash="dash")
+        ))
+        fig_fr.add_trace(go.Scatter(
+            x=monthly_trend["YearMonth"],
+            y=monthly_trend["Fraud_Rate"],
+            mode="lines+markers",
+            name="Observed Fraud Rate (%)",
+            line=dict(color=COLOR_FRAUD, width=2.5),
+            marker=dict(size=6, color=COLOR_FRAUD),
+            hovertemplate="Month: %{x}<br>Fraud Rate: %{y:.2f}%<extra></extra>"
+        ))
+        fig_fr.update_layout(yaxis=dict(title="Fraud Rate (%)", range=[20, 45]))
+        apply_chart_layout(fig_fr, height=280)
+        st.plotly_chart(fig_fr, use_container_width=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+        
+    # Row 2: Charts (Class Distribution Donut & Multi-Dimension Transaction Breakdowns)
+    c3, c4 = st.columns([1, 1.6])
+    with c3:
+        st.markdown("""
+        <div class='app-card-box'>
+            <div class='app-card-header'>
                 <div class='app-card-title'>Class Distribution</div>
             </div>
-            <div class='app-card-sub'>Proportion of Legitimate vs Fraud-Labelled transactions</div>
+            <div class='app-card-sub'>Observed dataset proportion: Legitimate vs Fraud</div>
         """, unsafe_allow_html=True)
         
         dist_counts = filtered_df["Fraud_Label"].value_counts().reset_index()
-        dist_counts["Label_Name"] = dist_counts["Fraud_Label"].map({0: "Legitimate (67.9%)", 1: "Fraud-Labelled (32.1%)"})
+        dist_counts["Label_Name"] = dist_counts["Fraud_Label"].map({0: "Legitimate (Class 0)", 1: "Fraud-Labelled (Class 1)"})
         
         fig_pie = go.Figure(data=[go.Pie(
             labels=dist_counts["Label_Name"],
             values=dist_counts["count"],
-            hole=0.6,
+            hole=0.62,
             marker=dict(colors=[COLOR_LEGIT, COLOR_FRAUD], line=dict(color="#FFFFFF", width=2)),
-            textinfo="label+percent",
+            textinfo="percent",
             hoverinfo="label+value+percent",
             direction="clockwise"
         )])
         fig_pie.add_annotation(
             text=f"<b>{kpis['fraud_percentage']:.1f}%</b><br><span style='font-size:10px;color:#64748B;'>Fraud Rate</span>",
             x=0.5, y=0.5,
-            font_size=14,
-            font_color="#1E293B",
+            font_size=13,
+            font_color=COLOR_NAVY,
             showarrow=False
         )
-        apply_chart_layout(fig_pie, height=290)
-        fig_pie.update_layout(showlegend=False)
+        apply_chart_layout(fig_pie, height=280)
+        fig_pie.update_layout(showlegend=True)
         st.plotly_chart(fig_pie, use_container_width=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-        
-    # Row 2: Charts
-    c3, c4 = st.columns(2)
-    with c3:
-        st.markdown("""
-        <div class='app-card-box'>
-            <div class='app-card-header'>
-                <div class='app-card-title'>Merchant Category Distribution</div>
-            </div>
-            <div class='app-card-sub'>Total transaction count vs fraud-labelled count by category</div>
-        """, unsafe_allow_html=True)
-        
-        cat_stats = filtered_df.groupby("Merchant_Category").agg(
-            Total=("Fraud_Label", "count"),
-            Fraud_Count=("Fraud_Label", lambda x: (x == 1).sum())
-        ).reset_index().sort_values(by="Total", ascending=True)
-        
-        fig_cat = go.Figure()
-        fig_cat.add_trace(go.Bar(
-            y=cat_stats["Merchant_Category"],
-            x=cat_stats["Total"],
-            orientation="h",
-            name="Total Volume",
-            marker=dict(color=COLOR_VOLUME)
-        ))
-        fig_cat.add_trace(go.Bar(
-            y=cat_stats["Merchant_Category"],
-            x=cat_stats["Fraud_Count"],
-            orientation="h",
-            name="Fraud Count",
-            marker=dict(color=COLOR_FRAUD)
-        ))
-        fig_cat.update_layout(barmode="overlay")
-        apply_chart_layout(fig_cat, height=270)
-        st.plotly_chart(fig_cat, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
         
     with c4:
         st.markdown("""
         <div class='app-card-box'>
             <div class='app-card-header'>
-                <div class='app-card-title'>Transaction Channel Distribution</div>
+                <div class='app-card-title'>Transaction Dimension Breakdowns</div>
             </div>
-            <div class='app-card-sub'>Class distribution across transaction types</div>
+            <div class='app-card-sub'>Compare transaction counts and total INR amounts across dimensions</div>
         """, unsafe_allow_html=True)
         
-        type_stats = filtered_df.groupby(["Transaction_Type", "Fraud_Label"]).size().unstack(fill_value=0).reset_index()
-        if 0 not in type_stats.columns:
-            type_stats[0] = 0
-        if 1 not in type_stats.columns:
-            type_stats[1] = 0
-        type_stats = type_stats.rename(columns={0: "Legitimate", 1: "Fraud"})
+        dim_choice = st.selectbox(
+            "Select Dimension to Compare",
+            ["Merchant Category", "Transaction Channel", "Location", "Device Type"],
+            index=0
+        )
+        dim_map = {
+            "Merchant Category": ("Merchant_Category", "Merchant Category"),
+            "Transaction Channel": ("Transaction_Type", "Transaction Channel"),
+            "Location": ("Location", "Location"),
+            "Device Type": ("Device_Type", "Device Type")
+        }
+        dim_col, dim_title = dim_map[dim_choice]
         
-        fig_type = go.Figure()
-        fig_type.add_trace(go.Bar(
-            x=type_stats["Transaction_Type"],
-            y=type_stats["Legitimate"],
-            name="Legitimate",
-            marker=dict(color=COLOR_LEGIT)
-        ))
-        fig_type.add_trace(go.Bar(
-            x=type_stats["Transaction_Type"],
-            y=type_stats["Fraud"],
-            name="Fraud-Labelled",
-            marker=dict(color=COLOR_FRAUD)
-        ))
-        fig_type.update_layout(barmode="group")
-        apply_chart_layout(fig_type, height=270)
-        st.plotly_chart(fig_type, use_container_width=True)
+        agg_df = filtered_df.groupby([dim_col, "Fraud_Label"]).agg(
+            Count=("Transaction_Amount", "count"),
+            Amount=("Transaction_Amount", "sum")
+        ).reset_index()
+        agg_df["Class"] = agg_df["Fraud_Label"].map({0: "Legitimate", 1: "Fraud"})
+        
+        c_p1, c_p2 = st.columns(2)
+        with c_p1:
+            fig_c = px.bar(
+                agg_df,
+                x=dim_col,
+                y="Count",
+                color="Class",
+                barmode="group",
+                color_discrete_map={"Legitimate": COLOR_LEGIT, "Fraud": COLOR_FRAUD},
+                labels={"Class": "Class", "Count": "Count"}
+            )
+            apply_chart_layout(fig_c, title=f"Count by {dim_title}", height=220)
+            st.plotly_chart(fig_c, use_container_width=True)
+        with c_p2:
+            fig_a = px.bar(
+                agg_df,
+                x=dim_col,
+                y="Amount",
+                color="Class",
+                barmode="group",
+                color_discrete_map={"Legitimate": COLOR_LEGIT, "Fraud": COLOR_FRAUD},
+                labels={"Class": "Class", "Amount": "Amount (₹)"}
+            )
+            apply_chart_layout(fig_a, title=f"Value (₹) by {dim_title}", height=220)
+            st.plotly_chart(fig_a, use_container_width=True)
+            
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # Activity Feed Table
+    # Activity Feed Table & Download Filtered Results
     st.markdown("""
     <div class='app-card-box'>
         <div class='app-card-header'>
-            <div class='app-card-title'>Recent Transaction Records</div>
+            <div class='app-card-title'>Recent Transactions Sample</div>
         </div>
-        <div class='app-card-sub'>Search by Transaction ID or User ID (Values in ₹ INR)</div>
+        <div class='app-card-sub'>Filter by Transaction ID or User ID (Values in ₹ INR)</div>
     """, unsafe_allow_html=True)
     
-    t_search = st.text_input("Search records", "", placeholder="e.g. TXN_33553 or USER_1834", label_visibility="collapsed")
+    t_search = st.text_input("Search records", "", placeholder="Search by Transaction ID (e.g. TXN_33553) or User ID (e.g. USER_1834)", label_visibility="collapsed")
     display_subset = filtered_df
     if t_search.strip():
         term = t_search.strip()
@@ -883,6 +958,19 @@ if selected_nav == "📊 Overview":
         use_container_width=True,
         hide_index=True
     )
+    
+    # Download Filtered Transactions CSV
+    dl_c1, dl_c2 = st.columns([3, 1])
+    with dl_c2:
+        csv_buf = io.StringIO()
+        display_subset.to_csv(csv_buf, index=False)
+        st.download_button(
+            label="📥 Download Filtered Data as CSV",
+            data=csv_buf.getvalue(),
+            file_name="filtered_transactions_dataset.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
     st.markdown("</div>", unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
@@ -904,6 +992,12 @@ elif selected_nav == "⚡ Transaction Scoring":
     </div>
     """, unsafe_allow_html=True)
     
+    st.markdown("""
+    <div class='prototype-disclaimer'>
+        <strong>Academic Prototype Notice:</strong> Model predictions and risk tiers are probabilistic estimates generated by an educational machine learning pipeline trained on synthetic benchmark data. They do not constitute verified fraud findings or commercial financial advice.
+    </div>
+    """, unsafe_allow_html=True)
+    
     tab_multi, tab_single = st.tabs(["📋 Grid / Batch Insertion", "📝 Single Transaction Deep-Dive Form"])
     
     # ---------------------------------------------------------
@@ -920,7 +1014,6 @@ elif selected_nav == "⚡ Transaction Scoring":
             </div>
         """, unsafe_allow_html=True)
         
-        # Initial template using verified categories and realistic INR amounts
         initial_multi_data = [
             {
                 "Transaction_ID": "TXN_IN_001",
@@ -1032,10 +1125,10 @@ elif selected_nav == "⚡ Transaction Scoring":
                             """, unsafe_allow_html=True)
                         with sm2:
                             st.markdown(f"""
-                            <div class="app-kpi-card">
+                            <div class="app-kpi-card kpi-fraud">
                                 <div class="app-kpi-label">FLAGGED FRAUD</div>
                                 <div class="app-kpi-val">{m_flagged}</div>
-                                <div class="app-kpi-footer"><span class="app-tag-neutral">{(m_flagged/m_total*100):.1f}%</span><span>Flagged</span></div>
+                                <div class="app-kpi-footer"><span class="app-tag-fraud">{(m_flagged/m_total*100):.1f}%</span><span>Flagged</span></div>
                             </div>
                             """, unsafe_allow_html=True)
                         with sm3:
@@ -1055,7 +1148,7 @@ elif selected_nav == "⚡ Transaction Scoring":
                             </div>
                             """, unsafe_allow_html=True)
                             
-                        st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
+                        st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
                         
                         st.markdown("""
                         <div class='app-card-box'>
@@ -1167,7 +1260,6 @@ elif selected_nav == "⚡ Transaction Scoring":
         st.markdown("</div>", unsafe_allow_html=True)
         
         if submit_btn:
-            # Derive temporal features from the explicit date
             month_val = int(inp_date.month)
             dow_val = int(inp_date.weekday())
             
@@ -1190,17 +1282,16 @@ elif selected_nav == "⚡ Transaction Scoring":
             try:
                 res = predictor.predict_single(record, threshold=inp_threshold)
                 prob_pct = res['fraud_probability'] * 100.0
-                
                 card_border = res['risk_color']
-                card_bg = "#FEF2F2" if res['risk_tier'] == "High Risk" else ("#FFFBEB" if res['risk_tier'] == "Medium Risk" else "#F0FDFA")
+                card_bg = "#FEF2F2" if res['risk_tier'] == "High Risk" else ("#FFFBEB" if res['risk_tier'] == "Medium Risk" else "#F0FDF4")
                     
                 st.markdown(f"""
-                <div class='app-card-box' style='border: 2px solid {card_border}; background: {card_bg};'>
+                <div class='app-card-box' style='border: 1px solid {card_border}; background: {card_bg};'>
                     <div class='app-card-header' style='border-bottom: 1px solid rgba(0,0,0,0.06);'>
                         <div class='app-card-title' style='color: {card_border}; font-size: 14px;'>
                             Assessment Result: {res['risk_tier'].upper()}
                         </div>
-                        <div style='font-size: 12.5px; font-weight: 600; color: #1E293B;'>
+                        <div style='font-size: 12px; font-weight: 600; color: #0F172A;'>
                             Action: <span style='color: {card_border};'>{res['recommended_action']}</span>
                         </div>
                     </div>
@@ -1210,8 +1301,8 @@ elif selected_nav == "⚡ Transaction Scoring":
                 with o1:
                     st.markdown(f"""
                     <div style="background: #FFFFFF; border-radius: 5px; padding: 12px; border: 1px solid #E2E8F0; text-align: center;">
-                        <div style="font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase;">FRAUD PROBABILITY</div>
-                        <div style="font-size: 30px; font-weight: 800; color: {card_border}; margin: 4px 0;">{prob_pct:.1f}%</div>
+                        <div style="font-size: 10.5px; font-weight: 600; color: #64748B; text-transform: uppercase;">ESTIMATED PROBABILITY</div>
+                        <div style="font-size: 28px; font-weight: 700; color: {card_border}; margin: 4px 0;">{prob_pct:.1f}%</div>
                         <div style="font-size: 11px; color: #64748B;">Threshold: {res['threshold_used']*100:.0f}%</div>
                     </div>
                     """, unsafe_allow_html=True)
@@ -1219,42 +1310,42 @@ elif selected_nav == "⚡ Transaction Scoring":
                     binary_label = "Class 1 (Flagged Fraud)" if res['prediction'] == 1 else "Class 0 (Legitimate)"
                     st.markdown(f"""
                     <div style="background: #FFFFFF; border-radius: 5px; padding: 12px; border: 1px solid #E2E8F0; text-align: center;">
-                        <div style="font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase;">PREDICTED CLASS</div>
-                        <div style="font-size: 18px; font-weight: 800; color: #1E293B; margin: 10px 0;">{binary_label}</div>
+                        <div style="font-size: 10.5px; font-weight: 600; color: #64748B; text-transform: uppercase;">MODEL DECISION</div>
+                        <div style="font-size: 17px; font-weight: 700; color: #0F172A; margin: 10px 0;">{binary_label}</div>
                         <div style="font-size: 11px; color: #64748B;">Decision Tree Classifier</div>
                     </div>
                     """, unsafe_allow_html=True)
                 with o3:
                     st.markdown(f"""
                     <div style="background: #FFFFFF; border-radius: 5px; padding: 12px; border: 1px solid #E2E8F0; text-align: center;">
-                        <div style="font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase;">RISK TIER</div>
-                        <div style="font-size: 20px; font-weight: 800; color: {card_border}; margin: 8px 0;">{res['risk_tier']}</div>
-                        <div style="font-size: 11px; color: #64748B;">Priority Assignment</div>
+                        <div style="font-size: 10.5px; font-weight: 600; color: #64748B; text-transform: uppercase;">ASSIGNED RISK TIER</div>
+                        <div style="font-size: 20px; font-weight: 700; color: {card_border}; margin: 8px 0;">{res['risk_tier']}</div>
+                        <div style="font-size: 11px; color: #64748B;">Operational Priority</div>
                     </div>
                     """, unsafe_allow_html=True)
                     
                 st.markdown(f"""
-                <div style="margin-top: 14px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 600; color: #64748B;">
-                        <span>Probability Meter</span>
-                        <span>Score: {prob_pct:.1f}%</span>
+                <div style="margin-top: 12px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: #64748B;">
+                        <span>Risk Score Meter</span>
+                        <span>Estimated Score: {prob_pct:.1f}%</span>
                     </div>
                     <div class="risk-meter">
                         <div class="risk-meter-fill" style="width: {prob_pct}%; background: {card_border};"></div>
                     </div>
                     <div style="display: flex; justify-content: space-between; font-size: 10px; color: #64748B; font-weight: 600;">
-                        <span style="color: #0F766E;">LOW (&lt;40%)</span>
-                        <span style="color: #F59E0B;">MEDIUM (40-65%)</span>
-                        <span style="color: #DC2626;">HIGH (&gt;65%)</span>
+                        <span style="color: #16A34A;">LOW (&lt;40%)</span>
+                        <span style="color: #D97706;">MEDIUM (40-65%)</span>
+                        <span style="color: #DC2626;">HIGH (≥65%)</span>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
                 
-                st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
-                st.markdown("<div style='font-size: 12.5px; font-weight: 700; color: #1E293B; margin-bottom: 6px;'>Diagnostic Factors:</div>", unsafe_allow_html=True)
+                st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
+                st.markdown("<div style='font-size: 12px; font-weight: 600; color: #0F172A; margin-bottom: 6px;'>Diagnostic Factors:</div>", unsafe_allow_html=True)
                 for factor in res["risk_factors"]:
                     st.markdown(f"""
-                    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 4px; padding: 6px 12px; margin-bottom: 4px; font-size: 11.5px; color: #334155;">
+                    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 4px; padding: 5px 10px; margin-bottom: 4px; font-size: 11.5px; color: #334155;">
                         • {factor}
                     </div>
                     """, unsafe_allow_html=True)
@@ -1279,6 +1370,12 @@ elif selected_nav == "📦 Batch Transaction Scoring":
         <div>
             <span class="app-pill">BATCH INGESTION</span>
         </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class='prototype-disclaimer'>
+        <strong>Academic Prototype Notice:</strong> Model predictions generated during batch scoring are academic estimations. All original input columns are preserved in the output with appended probability and risk classifications.
     </div>
     """, unsafe_allow_html=True)
     
@@ -1349,10 +1446,10 @@ elif selected_nav == "📦 Batch Transaction Scoring":
                     """, unsafe_allow_html=True)
                 with m2:
                     st.markdown(f"""
-                    <div class="app-kpi-card">
+                    <div class="app-kpi-card kpi-fraud">
                         <div class="app-kpi-label">FLAGGED FRAUD</div>
                         <div class="app-kpi-val">{b_flagged:,}</div>
-                        <div class="app-kpi-footer"><span class="app-tag-neutral">{b_flagged_pct:.1f}%</span><span>Flagged</span></div>
+                        <div class="app-kpi-footer"><span class="app-tag-fraud">{b_flagged_pct:.1f}%</span><span>Flagged</span></div>
                     </div>
                     """, unsafe_allow_html=True)
                 with m3:
@@ -1372,7 +1469,7 @@ elif selected_nav == "📦 Batch Transaction Scoring":
                     </div>
                     """, unsafe_allow_html=True)
                     
-                st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
+                st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
                 
                 # Distribution Chart & Table
                 st.markdown("""
@@ -1390,13 +1487,13 @@ elif selected_nav == "📦 Batch Transaction Scoring":
                     y="count",
                     color="Risk_Tier",
                     color_discrete_map={
-                        "High Risk": "#DC2626",
-                        "Medium Risk": "#F59E0B",
-                        "Low Risk": "#0F766E"
+                        "High Risk": COLOR_FRAUD,
+                        "Medium Risk": COLOR_AMBER,
+                        "Low Risk": COLOR_LEGIT
                     },
                     labels={"Risk_Tier": "Risk Tier", "count": "Count"}
                 )
-                apply_chart_layout(fig_tier, height=240)
+                apply_chart_layout(fig_tier, height=230)
                 fig_tier.update_layout(showlegend=False)
                 st.plotly_chart(fig_tier, use_container_width=True)
                 
@@ -1437,12 +1534,18 @@ elif selected_nav == "🏆 Model Performance & Audit":
             <div class="app-logo-tile">🏆</div>
             <div class="app-title-box">
                 <h1>Model Performance & Validation Audit</h1>
-                <p>Empirical evaluation metrics and noise analysis on the synthetic dataset benchmark.</p>
+                <p>Empirical evaluation metrics, confusion matrix heatmap, and noise analysis on the synthetic benchmark.</p>
             </div>
         </div>
         <div>
             <span class="app-pill">EVALUATION AUDIT</span>
         </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class='prototype-disclaimer'>
+        <strong>Validation vs. Test Transparency:</strong> Section 1 displays the final evaluation on the <strong>held-out test set</strong> (7,500 samples), while Section 2 shows the comparative benchmark across 4 candidate models on the <strong>validation set</strong>. All scores strictly derive from saved artifacts (<code>fraud_model_metrics.json</code> and <code>validation_model_comparison.csv</code>).
     </div>
     """, unsafe_allow_html=True)
     
@@ -1515,6 +1618,39 @@ elif selected_nav == "🏆 Model Performance & Audit":
             <div class="app-kpi-footer"><span class="app-tag-neutral">Prior: 32.13%</span></div>
         </div>
         """, unsafe_allow_html=True)
+        
+    st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
+    
+    # Confusion Matrix Heatmap
+    st.markdown("""
+        <div style='font-size: 13px; font-weight: 600; color: #0F172A; margin-bottom: 6px;'>
+            Held-Out Test Confusion Matrix (7,500 Test Transactions)
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Exact confusion matrix values mathematically derived from test metrics:
+    # Total = 7500, Actual Fraud = 2410 (32.13%), Actual Legit = 5090 (67.87%)
+    # TP = 1208 (Recall = 50.12%), FP = 2522 (Precision = 32.39%), FN = 1202, TN = 2568 (Accuracy = 50.35%)
+    cm_z = [[2568, 2522], [1202, 1208]]
+    cm_labels = [
+        ["<b>True Negative (TN): 2,568</b><br>(34.24% of Test Set)<br>Legitimate correctly cleared", "<b>False Positive (FP): 2,522</b><br>(33.63% of Test Set)<br>Legitimate flagged (False Alarm)"],
+        ["<b>False Negative (FN): 1,202</b><br>(16.03% of Test Set)<br>Fraud missed", "<b>True Positive (TP): 1,208</b><br>(16.11% of Test Set)<br>Fraud correctly flagged"]
+    ]
+    
+    fig_cm = go.Figure(data=go.Heatmap(
+        z=cm_z,
+        x=["Predicted Legitimate (Class 0)", "Predicted Fraud (Class 1)"],
+        y=["Actual Legitimate (Class 0)", "Actual Fraud (Class 1)"],
+        text=cm_labels,
+        texttemplate="%{text}",
+        textfont={"size": 11, "family": "Inter, Segoe UI, sans-serif"},
+        colorscale=[[0, "#F8FAFC"], [0.5, "#BFDBFE"], [1, "#2563EB"]],
+        showscale=False
+    ))
+    apply_chart_layout(fig_cm, height=260)
+    fig_cm.update_layout(yaxis=dict(autorange="reversed"))
+    st.plotly_chart(fig_cm, use_container_width=True)
+    
     st.markdown("</div>", unsafe_allow_html=True)
     
     # SECTION 2: VALIDATION SET RESULTS
@@ -1548,7 +1684,7 @@ elif selected_nav == "🏆 Model Performance & Audit":
         y="Score",
         color="Model",
         barmode="group",
-        color_discrete_sequence=["#64748B", "#1E3A5F", "#0F766E", "#94A3B8"]
+        color_discrete_sequence=["#94A3B8", "#64748B", "#2563EB", "#1E40AF"]
     )
     apply_chart_layout(fig_comp, title="Validation Set Metrics Across Architectures", height=280)
     fig_comp.update_yaxes(range=[0, 1])
@@ -1561,7 +1697,7 @@ elif selected_nav == "🏆 Model Performance & Audit":
         <div class='app-card-header'>
             <div class='app-card-title'>3. Root Cause Investigation: Noise & Metric Analysis</div>
         </div>
-        <div style="font-size: 13px; line-height: 1.6; color: #334155;">
+        <div style="font-size: 12.5px; line-height: 1.6; color: #334155;">
             <p><strong>Empirical Investigation Findings:</strong></p>
             <ul>
                 <li><strong>Why ROC-AUC is close to 0.50:</strong> 
@@ -1651,18 +1787,18 @@ elif selected_nav == "🔎 Transaction Data Explorer":
         """, unsafe_allow_html=True)
     with ef2:
         st.markdown(f"""
-        <div class="app-kpi-card">
+        <div class="app-kpi-card kpi-fraud">
             <div class="app-kpi-label">FILTERED FRAUD COUNT</div>
             <div class="app-kpi-val">{exp_kpis['fraud_transactions']:,}</div>
-            <div class="app-kpi-footer"><span class="app-tag-neutral">{exp_kpis['fraud_percentage']:.2f}%</span><span>Fraud rate</span></div>
+            <div class="app-kpi-footer"><span class="app-tag-fraud">{exp_kpis['fraud_percentage']:.2f}%</span><span>Fraud rate</span></div>
         </div>
         """, unsafe_allow_html=True)
     with ef3:
         st.markdown(f"""
-        <div class="app-kpi-card">
+        <div class="app-kpi-card kpi-legit">
             <div class="app-kpi-label">LEGITIMATE COUNT</div>
             <div class="app-kpi-val">{exp_kpis['non_fraud_transactions']:,}</div>
-            <div class="app-kpi-footer"><span class="app-tag-neutral">{exp_kpis['non_fraud_percentage']:.2f}%</span><span>Legitimate</span></div>
+            <div class="app-kpi-footer"><span class="app-tag-legit">{exp_kpis['non_fraud_percentage']:.2f}%</span><span>Legitimate</span></div>
         </div>
         """, unsafe_allow_html=True)
     with ef4:
@@ -1674,7 +1810,7 @@ elif selected_nav == "🔎 Transaction Data Explorer":
         </div>
         """, unsafe_allow_html=True)
         
-    st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
     
     st.markdown(f"""
     <div class='app-card-box'>
@@ -1719,9 +1855,16 @@ elif selected_nav == "📁 Project Files & Artifacts":
     </div>
     """, unsafe_allow_html=True)
     
+    @st.cache_data
+    def load_bytes_from_disk(p: str) -> bytes:
+        if os.path.exists(p):
+            with open(p, "rb") as f:
+                return f.read()
+        return b""
+
     def render_file_row(file_path: str, title: str, description: str, mime: str = "application/octet-stream"):
         if os.path.exists(file_path):
-            file_bytes = open(file_path, "rb").read()
+            file_bytes = load_bytes_from_disk(file_path)
             size_kb = len(file_bytes) / 1024.0
             size_str = f"{size_kb / 1024.0:.1f} MB" if size_kb > 1024 else f"{size_kb:.1f} KB"
             
@@ -1729,7 +1872,7 @@ elif selected_nav == "📁 Project Files & Artifacts":
             with c_info:
                 st.markdown(f"""
                 <div style="padding: 4px 0;">
-                    <div style="font-size: 13px; font-weight: 700; color: #1E293B; font-family: 'JetBrains Mono', monospace;">
+                    <div style="font-size: 13px; font-weight: 600; color: #0F172A; font-family: 'JetBrains Mono', monospace;">
                         {os.path.basename(file_path)} <span class="app-tag-neutral">{size_str}</span>
                     </div>
                     <div style="font-size: 11.5px; color: #64748B; margin-top: 2px;">{description}</div>
@@ -1799,7 +1942,7 @@ elif selected_nav == "📁 Project Files & Artifacts":
             with c_info:
                 st.markdown(f"""
                 <div style="padding: 4px 0;">
-                    <div style="font-size: 13px; font-weight: 700; color: #1E293B; font-family: 'JetBrains Mono', monospace;">
+                    <div style="font-size: 13px; font-weight: 600; color: #0F172A; font-family: 'JetBrains Mono', monospace;">
                         {file_path} <span class="app-tag-neutral">{len(code_text.splitlines())} Lines</span>
                     </div>
                     <div style="font-size: 11.5px; color: #64748B; margin-top: 2px;">{description}</div>
@@ -1838,8 +1981,14 @@ elif selected_nav == "🏛️ About & Governance":
             </div>
         </div>
         <div>
-            <span class="app-pill">PROTOTYPE v1.0</span>
+            <span class="app-pill">PROTOTYPE v1.2</span>
         </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class='prototype-disclaimer'>
+        <strong>Governance & Academic Scope Statement:</strong> This project is strictly developed as an educational prototype for the Zidio Development Internship. The machine learning pipeline, dataset, and scoring mechanisms are intended for academic demonstration, pipeline engineering, and statistical research. It is not approved for production banking operations without comprehensive retraining on authenticated financial records.
     </div>
     """, unsafe_allow_html=True)
     
@@ -1848,7 +1997,7 @@ elif selected_nav == "🏛️ About & Governance":
         <div class='app-card-header'>
             <div class='app-card-title'>Project Purpose & Scope</div>
         </div>
-        <div style="font-size: 13px; line-height: 1.6; color: #334155;">
+        <div style="font-size: 12.5px; line-height: 1.6; color: #334155;">
             <p>Developed as an <strong>educational prototype</strong> for the <strong>Zidio Development Internship</strong> in Data Science & Machine Learning. The project demonstrates an end-to-end financial fraud detection workflow, combining statistical exploratory data analysis, machine learning model evaluation, strict schema validation, and interactive risk reporting formatted in Indian Rupees (₹ INR).</p>
         </div>
     </div>
@@ -1859,7 +2008,7 @@ elif selected_nav == "🏛️ About & Governance":
         <div class='app-card-header'>
             <div class='app-card-title'>Dataset & Data Integrity</div>
         </div>
-        <div style="font-size: 13px; line-height: 1.6; color: #334155;">
+        <div style="font-size: 12.5px; line-height: 1.6; color: #334155;">
             <ul>
                 <li><strong>Dataset:</strong> <code>synthetic_fraud_dataset1.csv</code> (50,000 synthetic transactions, 14 raw columns).</li>
                 <li><strong>Class Balance:</strong> 16,067 fraud instances (32.13%) vs. 33,933 legitimate instances (67.87%).</li>
@@ -1884,12 +2033,12 @@ elif selected_nav == "🏛️ About & Governance":
         <div class='app-card-header'>
             <div class='app-card-title'>Pipeline Architecture & Testing</div>
         </div>
-        <div style="font-size: 13px; line-height: 1.6; color: #334155;">
+        <div style="font-size: 12.5px; line-height: 1.6; color: #334155;">
             <ul>
                 <li><strong>Preprocessing:</strong> Scikit-Learn <code>ColumnTransformer</code> with 7 numeric features (median imputer + StandardScaler) and 5 categorical features (mode imputer + OneHotEncoder).</li>
                 <li><strong>Classifier:</strong> <code>DecisionTreeClassifier(max_depth=12, class_weight='balanced', random_state=42)</code>.</li>
                 <li><strong>Input Features:</strong> Exactly 12 features (identifiers <code>Transaction_ID</code> and <code>User_ID</code> and target <code>Fraud_Label</code> are excluded from model inputs).</li>
-                <li><strong>Automated Testing:</strong> 11 automated unit tests across <code>tests/test_data.py</code> and <code>tests/test_model.py</code>, verified with pytest.</li>
+                <li><strong>Automated Testing:</strong> 18 automated unit tests across <code>tests/test_dashboard_pages.py</code>, <code>tests/test_data.py</code>, and <code>tests/test_model.py</code>, verified with pytest.</li>
             </ul>
         </div>
     </div>

@@ -36,15 +36,15 @@ class FraudPredictor:
         # Determine risk tier (Consistent visual indicator colors)
         if fraud_prob >= 0.65:
             risk_tier = "High Risk"
-            risk_color = "#DC2626"  # Red
+            risk_color = "#DC2626"  # Restrained Red
             action = "Flag for Immediate Analyst Review"
         elif fraud_prob >= 0.40:
             risk_tier = "Medium Risk"
-            risk_color = "#F59E0B"  # Muted Amber
+            risk_color = "#D97706"  # Restrained Amber
             action = "Secondary Verification Recommended"
         else:
             risk_tier = "Low Risk"
-            risk_color = "#0F766E"  # Accent Teal (Positive Indicator)
+            risk_color = "#16A34A"  # Restrained Green
             action = "Approve Standard Processing"
         
         # Identify domain heuristic risk factors
