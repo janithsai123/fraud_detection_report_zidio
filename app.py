@@ -56,13 +56,15 @@ def format_inr_lakhs(val: float) -> str:
         return f"₹{val:,.2f}"
 
 # -----------------------------------------------------------------------------
-# VISUAL THEME & PALETTE CONSTANTS (PREMIUM DARK MODE)
+# VISUAL THEME & PALETTE CONSTANTS (PREMIUM STYLISH FINTECH PALETTE)
 # -----------------------------------------------------------------------------
 COLOR_PRIMARY = "#38BDF8"   # Electric Sky Blue (Volume / Primary)
-COLOR_LEGIT = "#22C55E"     # Vibrant Emerald Green (Class 0 - Legitimate)
-COLOR_FRAUD = "#EF4444"     # Vibrant Coral Red (Class 1 - Potential Fraud)
-COLOR_AMBER = "#F59E0B"     # Vibrant Amber (Medium Risk)
+COLOR_LEGIT = "#10B981"     # Vibrant Mint Emerald Green (Class 0 - Legitimate)
+COLOR_FRAUD = "#F43F5E"     # Radiant Rose-Red (Class 1 - Potential Fraud)
+COLOR_AMBER = "#F59E0B"     # Vibrant Warm Amber (Medium Risk)
 COLOR_MUTED = "#64748B"     # Slate Grey (Baseline / Secondary)
+COLOR_INDIGO = "#818CF8"    # Soft Indigo
+COLOR_PURPLE = "#C084FC"    # Electric Purple
 COLOR_CARD_BG = "#111827"   # Deep Card Background
 COLOR_PAGE_BG = "#0B0F19"   # Rich Dark Page Canvas
 COLOR_BORDER = "#1E293B"    # Subtle Dark Border
@@ -261,7 +263,7 @@ st.markdown("""
         color: #94A3B8;
     }
     
-    /* Sleek KPI Cards */
+    /* Sleek KPI Cards with Glowing Accents */
     .app-kpi-card {
         background: #111827;
         border: 1px solid #1E293B;
@@ -283,19 +285,19 @@ st.markdown("""
         right: 0;
         height: 3px;
         background: #38BDF8;
-        box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+        box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
     }
     .app-kpi-card.kpi-legit::before {
-        background: #22C55E;
-        box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+        background: #10B981;
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
     }
     .app-kpi-card.kpi-fraud::before {
-        background: #EF4444;
-        box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+        background: #F43F5E;
+        box-shadow: 0 0 10px rgba(244, 63, 94, 0.6);
     }
     .app-kpi-card.kpi-amber::before {
         background: #F59E0B;
-        box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+        box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
     }
     .app-kpi-label {
         font-size: 10.5px;
@@ -345,9 +347,9 @@ st.markdown("""
         border-radius: 4px;
         font-weight: 700;
         font-size: 10px;
-        background: rgba(34, 197, 94, 0.15);
-        color: #4ADE80;
-        border: 1px solid rgba(34, 197, 94, 0.35);
+        background: rgba(16, 185, 129, 0.15);
+        color: #34D399;
+        border: 1px solid rgba(16, 185, 129, 0.35);
     }
     .app-tag-fraud {
         display: inline-block;
@@ -355,9 +357,9 @@ st.markdown("""
         border-radius: 4px;
         font-weight: 700;
         font-size: 10px;
-        background: rgba(239, 68, 68, 0.15);
-        color: #F87171;
-        border: 1px solid rgba(239, 68, 68, 0.35);
+        background: rgba(244, 63, 94, 0.15);
+        color: #FB7185;
+        border: 1px solid rgba(244, 63, 94, 0.35);
     }
     
     /* Stylish Dark Sidebar */
@@ -524,7 +526,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# CHART LAYOUT HELPER (POLISHED DARK THEME)
+# CHART LAYOUT HELPER (POLISHED MODERN FINTECH STYLING)
 # -----------------------------------------------------------------------------
 def apply_chart_layout(fig, title: str = "", height: int = 280):
     fig.update_layout(
@@ -534,34 +536,43 @@ def apply_chart_layout(fig, title: str = "", height: int = 280):
             "x": 0.02,
             "xanchor": "left",
             "yanchor": "top",
-            "font": {"size": 12.5, "color": COLOR_TEXT_MAIN, "family": "Plus Jakarta Sans, sans-serif", "weight": "bold"}
+            "font": {"size": 13, "color": COLOR_TEXT_MAIN, "family": "Plus Jakarta Sans, sans-serif", "weight": "bold"}
         },
-        margin={"l": 35, "r": 20, "t": 35 if title else 20, "b": 35},
+        margin={"l": 38, "r": 20, "t": 38 if title else 22, "b": 35},
         height=height,
-        paper_bgcolor=COLOR_CARD_BG,
-        plot_bgcolor=COLOR_CARD_BG,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
         font={"family": "Plus Jakarta Sans, sans-serif", "size": 11, "color": COLOR_TEXT_MUTED},
-        hoverlabel={"bgcolor": "#0B0F19", "bordercolor": COLOR_PRIMARY, "font_size": 11, "font_family": "Plus Jakarta Sans, sans-serif", "font_color": "#FFFFFF"},
+        hoverlabel={
+            "bgcolor": "#0F172A",
+            "bordercolor": COLOR_PRIMARY,
+            "font_size": 11,
+            "font_family": "Plus Jakarta Sans, sans-serif",
+            "font_color": "#F8FAFC"
+        },
         legend={
             "orientation": "h",
             "yanchor": "bottom",
             "y": 1.02,
             "xanchor": "right",
             "x": 1,
-            "font": {"size": 10.5, "color": COLOR_TEXT_MUTED}
+            "font": {"size": 10.5, "color": "#CBD5E1"},
+            "bgcolor": "rgba(17, 24, 39, 0.7)",
+            "bordercolor": "rgba(255, 255, 255, 0.08)",
+            "borderwidth": 1
         }
     )
     fig.update_xaxes(
         showgrid=True,
         gridwidth=1,
-        gridcolor="#1E293B",
+        gridcolor="rgba(255, 255, 255, 0.06)",
         zeroline=False,
         tickfont={"size": 10, "color": COLOR_TEXT_MUTED}
     )
     fig.update_yaxes(
         showgrid=True,
         gridwidth=1,
-        gridcolor="#1E293B",
+        gridcolor="rgba(255, 255, 255, 0.06)",
         zeroline=False,
         tickfont={"size": 10, "color": COLOR_TEXT_MUTED}
     )
@@ -646,7 +657,7 @@ st.markdown("""
     <div class="ribbon-right">
         <span>Dataset: <strong style="color: #F8FAFC;">synthetic_fraud_dataset1.csv</strong></span>
         <span class="ribbon-tag">₹ Indian Rupees (INR)</span>
-        <span class="ribbon-tag" style="color: #4ADE80; font-weight: 600; border-color: rgba(34, 197, 94, 0.35); background: rgba(34, 197, 94, 0.15);">● System Live</span>
+        <span class="ribbon-tag" style="color: #34D399; font-weight: 600; border-color: rgba(16, 185, 129, 0.35); background: rgba(16, 185, 129, 0.15);">● System Live</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -822,15 +833,17 @@ if selected_nav == "📊 Overview":
             x=monthly_grp["YearMonth"],
             y=monthly_grp["Legitimate"],
             name="Legitimate (Class 0)",
-            marker=dict(color=COLOR_LEGIT)
+            marker=dict(color=COLOR_LEGIT, cornerradius=4, line=dict(width=1, color="rgba(255,255,255,0.06)")),
+            hovertemplate="<b>%{x}</b><br>Legitimate: <b>%{y:,}</b> txns<extra></extra>"
         ))
         fig_trend.add_trace(go.Bar(
             x=monthly_grp["YearMonth"],
             y=monthly_grp["Fraud"],
             name="Fraud-Labelled (Class 1)",
-            marker=dict(color=COLOR_FRAUD)
+            marker=dict(color=COLOR_FRAUD, cornerradius=4, line=dict(width=1, color="rgba(255,255,255,0.06)")),
+            hovertemplate="<b>%{x}</b><br>Fraud: <b>%{y:,}</b> txns<extra></extra>"
         ))
-        fig_trend.update_layout(barmode="stack")
+        fig_trend.update_layout(barmode="stack", yaxis=dict(title="Volume (Count)"))
         apply_chart_layout(fig_trend, height=280)
         st.plotly_chart(fig_trend, use_container_width=True, config={"displayModeBar": False})
         st.markdown("</div>", unsafe_allow_html=True)
@@ -856,18 +869,21 @@ if selected_nav == "📊 Overview":
             y=[32.13] * len(monthly_trend),
             mode="lines",
             name="Annual Baseline (32.13%)",
-            line=dict(color=COLOR_MUTED, width=1.5, dash="dash")
+            line=dict(color=COLOR_MUTED, width=1.5, dash="dot"),
+            hovertemplate="Annual Baseline: 32.13%<extra></extra>"
         ))
         fig_fr.add_trace(go.Scatter(
             x=monthly_trend["YearMonth"],
             y=monthly_trend["Fraud_Rate"],
             mode="lines+markers",
             name="Observed Fraud Rate (%)",
-            line=dict(color=COLOR_FRAUD, width=2.5),
-            marker=dict(size=6, color=COLOR_FRAUD),
-            hovertemplate="Month: %{x}<br>Fraud Rate: %{y:.2f}%<extra></extra>"
+            line=dict(color=COLOR_FRAUD, shape="spline", smoothing=1.3, width=3),
+            fill="tozeroy",
+            fillcolor="rgba(244, 63, 94, 0.08)",
+            marker=dict(size=7, color=COLOR_FRAUD, line=dict(width=2, color="#FFFFFF")),
+            hovertemplate="<b>%{x}</b><br>Fraud Rate: <b>%{y:.2f}%</b><extra></extra>"
         ))
-        fig_fr.update_layout(yaxis=dict(title="Fraud Rate (%)", range=[20, 45]))
+        fig_fr.update_layout(yaxis=dict(title="Fraud Rate (%)", range=[20, 45], ticksuffix="%"))
         apply_chart_layout(fig_fr, height=280)
         st.plotly_chart(fig_fr, use_container_width=True, config={"displayModeBar": False})
         st.markdown("</div>", unsafe_allow_html=True)
@@ -889,17 +905,18 @@ if selected_nav == "📊 Overview":
         fig_pie = go.Figure(data=[go.Pie(
             labels=dist_counts["Label_Name"],
             values=dist_counts["count"],
-            hole=0.62,
-            marker=dict(colors=[COLOR_LEGIT, COLOR_FRAUD], line=dict(color="#111827", width=2)),
+            hole=0.66,
+            pull=[0, 0.04],
+            marker=dict(colors=[COLOR_LEGIT, COLOR_FRAUD], line=dict(color="#111827", width=3)),
             textinfo="percent",
+            textfont=dict(size=11, color="#FFFFFF", family="Plus Jakarta Sans"),
             hoverinfo="label+value+percent",
-            direction="clockwise"
+            direction="clockwise",
+            hovertemplate="<b>%{label}</b><br>Volume: %{value:,} (%{percent})<extra></extra>"
         )])
         fig_pie.add_annotation(
-            text=f"<b>{kpis['fraud_percentage']:.1f}%</b><br><span style='font-size:10px;color:#94A3B8;'>Fraud Rate</span>",
+            text=f"<span style='font-size:22px; font-weight:800; color:#F8FAFC;'>{kpis['fraud_percentage']:.1f}%</span><br><span style='font-size:10.5px; color:#F43F5E; font-weight:700; letter-spacing:0.05em;'>FRAUD RATE</span>",
             x=0.5, y=0.5,
-            font_size=13,
-            font_color=COLOR_TEXT_MAIN,
             showarrow=False
         )
         apply_chart_layout(fig_pie, height=280)
@@ -946,7 +963,11 @@ if selected_nav == "📊 Overview":
                 color_discrete_map={"Legitimate": COLOR_LEGIT, "Fraud": COLOR_FRAUD},
                 labels={"Class": "Class", "Count": "Count"}
             )
-            apply_chart_layout(fig_c, title=f"Count by {dim_title}", height=220)
+            fig_c.update_traces(
+                marker_cornerradius=4,
+                hovertemplate="<b>%{x}</b> (%{data.name}): %{y:,}<extra></extra>"
+            )
+            apply_chart_layout(fig_c, title=f"Count by {dim_title}", height=230)
             st.plotly_chart(fig_c, use_container_width=True, config={"displayModeBar": False})
         with c_p2:
             fig_a = px.bar(
@@ -958,7 +979,12 @@ if selected_nav == "📊 Overview":
                 color_discrete_map={"Legitimate": COLOR_LEGIT, "Fraud": COLOR_FRAUD},
                 labels={"Class": "Class", "Amount": "Amount (₹)"}
             )
-            apply_chart_layout(fig_a, title=f"Value (₹) by {dim_title}", height=220)
+            fig_a.update_traces(
+                marker_cornerradius=4,
+                hovertemplate="<b>%{x}</b> (%{data.name}): ₹%{y:,.0f}<extra></extra>"
+            )
+            fig_a.update_yaxes(tickprefix="₹")
+            apply_chart_layout(fig_a, title=f"Value (₹) by {dim_title}", height=230)
             st.plotly_chart(fig_a, use_container_width=True, config={"displayModeBar": False})
             
         st.markdown("</div>", unsafe_allow_html=True)
@@ -1315,7 +1341,7 @@ elif selected_nav == "⚡ Transaction Scoring":
                 res = predictor.predict_single(record, threshold=inp_threshold)
                 prob_pct = res['fraud_probability'] * 100.0
                 card_border = res['risk_color']
-                card_bg = "rgba(239, 68, 68, 0.10)" if res['risk_tier'] == "High Risk" else ("rgba(245, 158, 11, 0.10)" if res['risk_tier'] == "Medium Risk" else "rgba(34, 197, 94, 0.10)")
+                card_bg = "rgba(244, 63, 94, 0.10)" if res['risk_tier'] == "High Risk" else ("rgba(245, 158, 11, 0.10)" if res['risk_tier'] == "Medium Risk" else "rgba(16, 185, 129, 0.10)")
                     
                 st.markdown(f"""
                 <div class='app-card-box' style='border: 1px solid {card_border}; background: {card_bg};'>
@@ -1366,9 +1392,9 @@ elif selected_nav == "⚡ Transaction Scoring":
                         <div class="risk-meter-fill" style="width: {prob_pct}%; background: {card_border};"></div>
                     </div>
                     <div style="display: flex; justify-content: space-between; font-size: 10px; color: #94A3B8; font-weight: 600;">
-                        <span style="color: #22C55E;">LOW (&lt;40%)</span>
+                        <span style="color: #10B981;">LOW (&lt;40%)</span>
                         <span style="color: #F59E0B;">MEDIUM (40-65%)</span>
-                        <span style="color: #EF4444;">HIGH (≥65%)</span>
+                        <span style="color: #F43F5E;">HIGH (≥65%)</span>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -1503,7 +1529,7 @@ elif selected_nav == "📦 Batch Transaction Scoring":
                     
                 st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
                 
-                # Distribution Chart & Table
+                # Distribution Chart & Table with Rounded Bars & Clear Data Labels
                 st.markdown("""
                 <div class='app-card-box'>
                     <div class='app-card-header'>
@@ -1523,9 +1549,16 @@ elif selected_nav == "📦 Batch Transaction Scoring":
                         "Medium Risk": COLOR_AMBER,
                         "Low Risk": COLOR_LEGIT
                     },
+                    text="count",
                     labels={"Risk_Tier": "Risk Tier", "count": "Count"}
                 )
-                apply_chart_layout(fig_tier, height=230)
+                fig_tier.update_traces(
+                    marker_cornerradius=6,
+                    textposition="outside",
+                    textfont=dict(color="#F8FAFC", size=11, family="Plus Jakarta Sans", weight="bold"),
+                    hovertemplate="<b>%{x}</b><br>Transactions: <b>%{y:,}</b><extra></extra>"
+                )
+                apply_chart_layout(fig_tier, height=240)
                 fig_tier.update_layout(showlegend=False)
                 st.plotly_chart(fig_tier, use_container_width=True, config={"displayModeBar": False})
                 
@@ -1651,7 +1684,7 @@ elif selected_nav == "🏆 Model Performance & Audit":
         
     st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
     
-    # Confusion Matrix Heatmap (Dark Mode Theme)
+    # Stylish Confusion Matrix Heatmap (High-Contrast Neon-Tinted Tiles)
     st.markdown("""
         <div style='font-size: 13px; font-weight: 700; color: #F8FAFC; margin-bottom: 6px;'>
             Held-Out Test Confusion Matrix (7,500 Test Transactions)
@@ -1660,8 +1693,8 @@ elif selected_nav == "🏆 Model Performance & Audit":
     
     cm_z = [[2568, 2522], [1202, 1208]]
     cm_labels = [
-        ["<b>True Negative (TN): 2,568</b><br>(34.24% of Test Set)<br>Legitimate correctly cleared", "<b>False Positive (FP): 2,522</b><br>(33.63% of Test Set)<br>Legitimate flagged (False Alarm)"],
-        ["<b>False Negative (FN): 1,202</b><br>(16.03% of Test Set)<br>Fraud missed", "<b>True Positive (TP): 1,208</b><br>(16.11% of Test Set)<br>Fraud correctly flagged"]
+        ["<b>TRUE NEGATIVE (TN)</b><br><span style='font-size:18px; font-weight:800; color:#F8FAFC;'>2,568</span><br><span style='color:#38BDF8; font-weight:700; font-size:12px;'>34.24% of Test</span><br><span style='color:#94A3B8; font-size:10.5px;'>Legitimate Cleared</span>", "<b>FALSE POSITIVE (FP)</b><br><span style='font-size:18px; font-weight:800; color:#F8FAFC;'>2,522</span><br><span style='color:#FBBF24; font-weight:700; font-size:12px;'>33.63% of Test</span><br><span style='color:#94A3B8; font-size:10.5px;'>False Alarm (Flagged)</span>"],
+        ["<b>FALSE NEGATIVE (FN)</b><br><span style='font-size:18px; font-weight:800; color:#F8FAFC;'>1,202</span><br><span style='color:#F87171; font-weight:700; font-size:12px;'>16.03% of Test</span><br><span style='color:#94A3B8; font-size:10.5px;'>Missed Fraud</span>", "<b>TRUE POSITIVE (TP)</b><br><span style='font-size:18px; font-weight:800; color:#F8FAFC;'>1,208</span><br><span style='color:#4ADE80; font-weight:700; font-size:12px;'>16.11% of Test</span><br><span style='color:#94A3B8; font-size:10.5px;'>Fraud Correctly Flagged</span>"]
     ]
     
     fig_cm = go.Figure(data=go.Heatmap(
@@ -1671,10 +1704,12 @@ elif selected_nav == "🏆 Model Performance & Audit":
         text=cm_labels,
         texttemplate="%{text}",
         textfont={"size": 11, "family": "Plus Jakarta Sans, sans-serif"},
-        colorscale=[[0, "#0F172A"], [0.5, "#1E3A8A"], [1, "#0284C7"]],
-        showscale=False
+        colorscale=[[0, "#0B1528"], [0.35, "#172554"], [0.7, "#0369A1"], [1, "#0284C7"]],
+        showscale=False,
+        xgap=4,
+        ygap=4
     ))
-    apply_chart_layout(fig_cm, height=260)
+    apply_chart_layout(fig_cm, height=270)
     fig_cm.update_layout(yaxis=dict(autorange="reversed"))
     st.plotly_chart(fig_cm, use_container_width=True, config={"displayModeBar": False})
     
@@ -1711,10 +1746,14 @@ elif selected_nav == "🏆 Model Performance & Audit":
         y="Score",
         color="Model",
         barmode="group",
-        color_discrete_sequence=["#64748B", "#0284C7", "#38BDF8", "#818CF8"]
+        color_discrete_sequence=[COLOR_MUTED, COLOR_INDIGO, COLOR_PRIMARY, COLOR_PURPLE]
     )
+    fig_comp.update_traces(
+        marker_cornerradius=4,
+        hovertemplate="<b>%{data.name}</b><br>%{x}: <b>%{y:.2%}</b><extra></extra>"
+    )
+    fig_comp.update_yaxes(range=[0, 1.05], tickformat=".0%")
     apply_chart_layout(fig_comp, title="Validation Set Metrics Across Architectures", height=280)
-    fig_comp.update_yaxes(range=[0, 1])
     st.plotly_chart(fig_comp, use_container_width=True, config={"displayModeBar": False})
     st.markdown("</div>", unsafe_allow_html=True)
     
