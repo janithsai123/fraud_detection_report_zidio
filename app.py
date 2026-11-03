@@ -1,49 +1,60 @@
+"""
+Financial Fraud Detection System - Streamlit Dashboard
+Zidio Development Internship Capstone Project
+
+Professional Light Analytics Dashboard
+- Strict Light Analytics Theme (Navy/Teal/Blue/Slate)
+- Clean, compact, professional sidebar navigation menu
+- Typography hierarchy matching exact specifications:
+  * Page titles: 32px bold
+  * Section headings: 24px semibold
+  * Metric values: 30px bold
+  * Metric labels: 16px semibold
+  * Body text & Navigation: 16px
+  * Chart titles: 18px bold
+  * Chart axes, legends, tables: 14-15px
+  * Form labels, inputs, buttons: 16px
+- Cohesive chart palette: Blue (#2563EB), Green (#16A34A), Red (#DC2626), Amber (#D97706)
+- Transparent academic prototype disclosures & empirical data integrity
+"""
+
+import streamlit as st
+import pandas as pd
+import numpy as np
+import plotly.express as px
+import plotly.graph_objects as go
 import os
-import sys
-import io
 import json
 import datetime
-from pathlib import Path
-import numpy as np
-import pandas as pd
-import streamlit as st
-import plotly.graph_objects as go
-import plotly.express as px
-
-# Ensure project root is in sys.path
-root_dir = Path(__file__).parent.resolve()
-if str(root_dir) not in sys.path:
-    sys.path.insert(0, str(root_dir))
-
+from src.data_loader import (
+    load_main_dataset,
+    compute_dataset_kpis,
+    load_metrics_and_comparison
+)
 from src.model_loader import (
     load_pipeline,
-    preprocess_features,
     validate_batch_schema,
+    preprocess_features,
     REQUIRED_FEATURES,
     VALID_CATEGORIES
 )
 from src.predictor import FraudPredictor
-from src.data_loader import (
-    load_main_dataset,
-    load_metrics_and_comparison,
-    compute_dataset_kpis
-)
 
 # -----------------------------------------------------------------------------
 # PAGE CONFIGURATION
 # -----------------------------------------------------------------------------
 st.set_page_config(
-    page_title="Financial Fraud Detection System — Academic Prototype & Risk Analytics",
+    page_title="Financial Fraud Detection System",
     page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # -----------------------------------------------------------------------------
-# CURRENCY FORMATTING HELPERS (INDIAN RUPEES — ₹ INR)
+# CURRENCY & NUMBER FORMATTING HELPERS (INR)
 # -----------------------------------------------------------------------------
 def format_inr(val: float) -> str:
-    """Formats a number as Indian Currency (₹ INR)."""
+    """Formats values as Indian Rupees (INR) with symbol and grouping."""
     return f"₹{val:,.2f}"
 
 def format_inr_lakhs(val: float) -> str:
@@ -56,20 +67,20 @@ def format_inr_lakhs(val: float) -> str:
         return f"₹{val:,.2f}"
 
 # -----------------------------------------------------------------------------
-# VISUAL THEME & PALETTE CONSTANTS (PREMIUM STYLISH FINTECH PALETTE)
+# VISUAL THEME & PALETTE CONSTANTS (PROFESSIONAL LIGHT ANALYTICS)
 # -----------------------------------------------------------------------------
-COLOR_PRIMARY = "#38BDF8"   # Electric Sky Blue (Volume / Primary)
-COLOR_LEGIT = "#10B981"     # Vibrant Mint Emerald Green (Class 0 - Legitimate)
-COLOR_FRAUD = "#F43F5E"     # Radiant Rose-Red (Class 1 - Potential Fraud)
-COLOR_AMBER = "#F59E0B"     # Vibrant Warm Amber (Medium Risk)
-COLOR_MUTED = "#64748B"     # Slate Grey (Baseline / Secondary)
-COLOR_INDIGO = "#818CF8"    # Soft Indigo
-COLOR_PURPLE = "#C084FC"    # Electric Purple
-COLOR_CARD_BG = "#111827"   # Deep Card Background
-COLOR_PAGE_BG = "#0B0F19"   # Rich Dark Page Canvas
-COLOR_BORDER = "#1E293B"    # Subtle Dark Border
-COLOR_TEXT_MAIN = "#F8FAFC" # Bright White Text
-COLOR_TEXT_MUTED = "#94A3B8"# Slate Silver Text
+COLOR_PRIMARY = "#2563EB"   # Professional Blue (Primary metrics & actions)
+COLOR_NAVY = "#1E3A8A"      # Deep Navy Accent
+COLOR_TEAL = "#0D9488"      # Balanced Teal Accent
+COLOR_LEGIT = "#16A34A"     # Restrained Emerald Green (Class 0 - Legitimate)
+COLOR_FRAUD = "#DC2626"     # Restrained Red (Class 1 - Potential Fraud)
+COLOR_AMBER = "#D97706"     # Restrained Amber (Medium Risk / Warning)
+COLOR_MUTED = "#64748B"     # Slate Gray (Secondary / subtle)
+COLOR_CARD_BG = "#FFFFFF"   # White Content Card Surface
+COLOR_PAGE_BG = "#F8FAFC"   # Very Light Gray Page Canvas
+COLOR_BORDER = "#E2E8F0"    # Subtle Gray Border
+COLOR_TEXT_MAIN = "#0F172A" # Dark Navy / Charcoal Heading Text
+COLOR_TEXT_MUTED = "#475569"# Slate Gray Body Text
 
 # -----------------------------------------------------------------------------
 # CACHED DATA & PERFORMANCE HELPERS
@@ -113,7 +124,7 @@ except Exception as e:
     st.stop()
 
 # -----------------------------------------------------------------------------
-# STYLING (PREMIUM FINTECH DARK THEME & STYLISH MODERN NAVIGATION)
+# STYLING (CLEAN PROFESSIONAL LIGHT ANALYTICS THEME & MODERN NAVIGATION)
 # -----------------------------------------------------------------------------
 st.markdown("""
 <style>
@@ -121,26 +132,51 @@ st.markdown("""
     
     html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        color: #F1F5F9;
+        color: #334155;
         letter-spacing: -0.01em;
     }
     
-    /* Main Dark Canvas */
+    /* Clean Light Page Canvas */
     .stApp {
-        background-color: #0B0F19 !important;
+        background-color: #F8FAFC !important;
     }
     
-    /* Top Ribbon */
+    /* Typography Specifications */
+    h1 {
+        font-size: 32px !important;
+        font-weight: 700 !important;
+        color: #0F172A !important;
+        line-height: 1.25 !important;
+        margin-bottom: 6px !important;
+    }
+    h2, h3, .app-card-title {
+        font-size: 24px !important;
+        font-weight: 600 !important;
+        color: #1E293B !important;
+        line-height: 1.3 !important;
+    }
+    h4 {
+        font-size: 18px !important;
+        font-weight: 600 !important;
+        color: #1E293B !important;
+    }
+    p, span, li, label {
+        font-size: 16px !important;
+        color: #334155 !important;
+        line-height: 1.55 !important;
+    }
+    
+    /* Top Ribbon Header */
     .app-top-ribbon {
-        background: #111827;
-        border: 1px solid #1E293B;
-        padding: 9px 18px;
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        padding: 10px 18px;
         margin-top: -3.5rem;
         margin-bottom: 16px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
         border-radius: 8px;
     }
     .ribbon-left {
@@ -151,125 +187,125 @@ st.markdown("""
     .ribbon-logo {
         display: flex;
         align-items: center;
-        gap: 9px;
+        gap: 10px;
         font-weight: 700;
-        font-size: 13.5px;
-        color: #F8FAFC;
+        font-size: 16px !important;
+        color: #0F172A;
     }
     .ribbon-badge {
-        background: linear-gradient(135deg, #0284C7, #2563EB);
-        color: #FFFFFF;
-        font-weight: 800;
-        padding: 2px 8px;
+        background: #EFF6FF;
+        color: #2563EB;
+        border: 1px solid #BFDBFE;
+        font-weight: 700;
+        padding: 3px 10px;
         border-radius: 4px;
-        font-size: 10.5px;
-        letter-spacing: 0.04em;
-        box-shadow: 0 0 10px rgba(14, 165, 233, 0.35);
+        font-size: 13px !important;
+        letter-spacing: 0.03em;
     }
     .ribbon-right {
         display: flex;
         align-items: center;
-        gap: 10px;
-        font-size: 11.5px;
-        color: #94A3B8;
+        gap: 12px;
+        font-size: 14px !important;
+        color: #475569;
     }
     .ribbon-tag {
-        background: #1E293B;
-        border: 1px solid #334155;
-        padding: 3px 9px;
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        padding: 4px 10px;
         border-radius: 4px;
-        font-size: 11px;
-        color: #CBD5E1;
+        font-size: 13px !important;
+        color: #334155;
     }
     
     /* Page Header Banner */
     .app-header-banner {
-        background: #111827;
-        border: 1px solid #1E293B;
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
         border-radius: 8px;
-        padding: 15px 20px;
-        margin-bottom: 14px;
+        padding: 18px 22px;
+        margin-bottom: 16px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
     }
     .app-brand {
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 16px;
     }
     .app-logo-tile {
-        width: 38px;
-        height: 38px;
-        background: rgba(56, 189, 248, 0.12);
-        border: 1px solid rgba(56, 189, 248, 0.35);
+        width: 44px;
+        height: 44px;
+        background: #EFF6FF;
+        border: 1px solid #BFDBFE;
         border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 18px;
-        color: #38BDF8;
-        box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+        font-size: 22px;
+        color: #2563EB;
     }
     .app-title-box h1 {
-        color: #F8FAFC !important;
-        font-size: 18px;
-        font-weight: 700;
-        margin: 0;
+        color: #0F172A !important;
+        font-size: 32px !important;
+        font-weight: 700 !important;
+        margin: 0 !important;
         letter-spacing: -0.02em;
     }
     .app-title-box p {
-        color: #94A3B8 !important;
-        font-size: 12px;
-        margin-top: 2px;
+        color: #64748B !important;
+        font-size: 16px !important;
+        margin-top: 4px;
         margin-bottom: 0;
     }
     .app-pill {
-        background: rgba(56, 189, 248, 0.12);
-        border: 1px solid rgba(56, 189, 248, 0.3);
-        color: #38BDF8;
-        padding: 4px 12px;
+        background: #EFF6FF;
+        border: 1px solid #BFDBFE;
+        color: #2563EB;
+        padding: 5px 14px;
         border-radius: 14px;
-        font-size: 11px;
+        font-size: 13px !important;
         font-weight: 700;
-        letter-spacing: 0.03em;
+        letter-spacing: 0.02em;
     }
     
-    /* Content Cards (Dark Theme) */
+    /* Content Cards (Light Analytics Theme) */
     .app-card-box {
-        background: #111827;
-        border: 1px solid #1E293B;
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
         border-radius: 8px;
-        padding: 16px 18px;
-        margin-bottom: 14px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        padding: 20px 22px;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
     }
     .app-card-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 10px;
-        padding-bottom: 7px;
-        border-bottom: 1px solid #1E293B;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #E2E8F0;
     }
     .app-card-title {
-        font-size: 13.5px;
-        font-weight: 700;
-        color: #F8FAFC;
+        font-size: 24px !important;
+        font-weight: 600 !important;
+        color: #1E293B !important;
     }
     .app-card-sub {
-        font-size: 11.5px;
-        color: #94A3B8;
+        font-size: 15px !important;
+        color: #64748B !important;
+        margin-top: 2px;
     }
     
-    /* Sleek KPI Cards with Glowing Accents */
+    /* KPI Cards (Clean Light Theme with Refined Accent Stripes) */
     .app-kpi-card {
-        background: #111827;
-        border: 1px solid #1E293B;
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
         border-radius: 8px;
-        padding: 14px 16px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+        padding: 16px 18px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
         position: relative;
         overflow: hidden;
         height: 100%;
@@ -284,98 +320,94 @@ st.markdown("""
         left: 0;
         right: 0;
         height: 3px;
-        background: #38BDF8;
-        box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+        background: #2563EB;
     }
     .app-kpi-card.kpi-legit::before {
-        background: #10B981;
-        box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+        background: #16A34A;
     }
     .app-kpi-card.kpi-fraud::before {
-        background: #F43F5E;
-        box-shadow: 0 0 10px rgba(244, 63, 94, 0.6);
+        background: #DC2626;
     }
     .app-kpi-card.kpi-amber::before {
-        background: #F59E0B;
-        box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+        background: #D97706;
     }
     .app-kpi-label {
-        font-size: 10.5px;
-        font-weight: 700;
+        font-size: 16px !important;
+        font-weight: 600 !important;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: #94A3B8;
+        letter-spacing: 0.03em;
+        color: #64748B !important;
         margin-bottom: 4px;
     }
     .app-kpi-val {
-        font-size: 23px;
-        font-weight: 800;
-        color: #F8FAFC;
-        line-height: 1.15;
+        font-size: 30px !important;
+        font-weight: 700 !important;
+        color: #0F172A !important;
+        line-height: 1.2;
     }
     .app-kpi-footer {
-        margin-top: 6px;
+        margin-top: 8px;
         display: flex;
         align-items: center;
-        gap: 6px;
-        font-size: 11px;
-        color: #94A3B8;
+        gap: 8px;
+        font-size: 14px !important;
+        color: #64748B !important;
     }
     .app-tag-neutral {
         display: inline-block;
-        padding: 1px 6px;
+        padding: 2px 8px;
         border-radius: 4px;
         font-weight: 600;
-        font-size: 10px;
-        background: #1E293B;
-        color: #CBD5E1;
-        border: 1px solid #334155;
+        font-size: 13px !important;
+        background: #F1F5F9;
+        color: #334155;
+        border: 1px solid #E2E8F0;
     }
     .app-tag-accent {
         display: inline-block;
-        padding: 1px 6px;
+        padding: 2px 8px;
         border-radius: 4px;
         font-weight: 700;
-        font-size: 10px;
-        background: rgba(56, 189, 248, 0.15);
-        color: #38BDF8;
-        border: 1px solid rgba(56, 189, 248, 0.35);
+        font-size: 13px !important;
+        background: #EFF6FF;
+        color: #1D4ED8;
+        border: 1px solid #BFDBFE;
     }
     .app-tag-legit {
         display: inline-block;
-        padding: 1px 6px;
+        padding: 2px 8px;
         border-radius: 4px;
         font-weight: 700;
-        font-size: 10px;
-        background: rgba(16, 185, 129, 0.15);
-        color: #34D399;
-        border: 1px solid rgba(16, 185, 129, 0.35);
+        font-size: 13px !important;
+        background: #F0FDF4;
+        color: #15803D;
+        border: 1px solid #BBF7D0;
     }
     .app-tag-fraud {
         display: inline-block;
-        padding: 1px 6px;
+        padding: 2px 8px;
         border-radius: 4px;
         font-weight: 700;
-        font-size: 10px;
-        background: rgba(244, 63, 94, 0.15);
-        color: #FB7185;
-        border: 1px solid rgba(244, 63, 94, 0.35);
+        font-size: 13px !important;
+        background: #FEF2F2;
+        color: #B91C1C;
+        border: 1px solid #FECACA;
     }
     
-    /* Stylish Dark Sidebar */
+    /* Clean Light Sidebar */
     section[data-testid="stSidebar"] {
-        background-color: #0D131F !important;
-        border-right: 1px solid #1E293B !important;
+        background-color: #FFFFFF !important;
+        border-right: 1px solid #E2E8F0 !important;
     }
     section[data-testid="stSidebar"] > div {
-        background-color: #0D131F !important;
+        background-color: #FFFFFF !important;
         padding-top: 1rem !important;
     }
     section[data-testid="stSidebar"] div[data-testid="stSidebarUserContent"] {
-        background-color: #0D131F !important;
+        background-color: #FFFFFF !important;
     }
     
-    /* Modern Stylish Navigation Radio */
+    /* Compact, Professional Navigation Menu */
     section[data-testid="stSidebar"] div[data-testid="stRadioCircle"],
     section[data-testid="stSidebar"] input[type="radio"],
     section[data-testid="stSidebar"] div[data-testid="stRadio"] > div > div > label > div:first-child:not([data-testid="stMarkdownContainer"]) {
@@ -384,17 +416,17 @@ st.markdown("""
     section[data-testid="stSidebar"] div[role="radiogroup"] {
         display: flex !important;
         flex-direction: column !important;
-        gap: 4px !important;
+        gap: 6px !important;
         padding: 4px 0 !important;
     }
     section[data-testid="stSidebar"] div[role="radiogroup"] > label {
         display: flex !important;
         align-items: center !important;
-        background: #111827 !important;
-        border: 1px solid #1E293B !important;
+        background: #FFFFFF !important;
+        border: 1px solid #E2E8F0 !important;
         border-left: 3px solid transparent !important;
         border-radius: 6px !important;
-        padding: 9px 12px !important;
+        padding: 10px 14px !important;
         margin: 0 !important;
         cursor: pointer !important;
         transition: all 0.15s ease-in-out !important;
@@ -404,129 +436,122 @@ st.markdown("""
     section[data-testid="stSidebar"] div[role="radiogroup"] > label div[data-testid="stMarkdownContainer"] p,
     section[data-testid="stSidebar"] div[role="radiogroup"] > label span,
     section[data-testid="stSidebar"] div[role="radiogroup"] > label p {
-        color: #94A3B8 !important;
+        color: #334155 !important;
         font-weight: 500 !important;
-        font-size: 12.5px !important;
+        font-size: 16px !important;
         margin: 0 !important;
-        line-height: 1.35 !important;
+        line-height: 1.4 !important;
     }
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover {
-        background: #1E293B !important;
-        border-color: #334155 !important;
-        border-left: 3px solid #64748B !important;
-        transform: translateX(2px) !important;
+        background: #F8FAFC !important;
+        border-color: #CBD5E1 !important;
+        border-left: 3px solid #94A3B8 !important;
     }
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover div[data-testid="stMarkdownContainer"] p,
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover p {
-        color: #F8FAFC !important;
+        color: #0F172A !important;
     }
     
-    /* Selected State: Radiant Neon Glow Accent */
+    /* Active Navigation State: Restrained Professional Blue Highlight */
     section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"],
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked),
     section[data-testid="stSidebar"] div[role="radiogroup"] > label[aria-checked="true"] {
-        background: rgba(14, 165, 233, 0.12) !important;
-        border: 1px solid rgba(56, 189, 248, 0.35) !important;
-        border-left: 3px solid #38BDF8 !important;
-        box-shadow: 0 0 12px rgba(56, 189, 248, 0.15) !important;
+        background: #EFF6FF !important;
+        border: 1px solid #BFDBFE !important;
+        border-left: 3px solid #2563EB !important;
+        box-shadow: 0 1px 2px rgba(37, 99, 235, 0.08) !important;
     }
     section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] div[data-testid="stMarkdownContainer"] p,
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked) div[data-testid="stMarkdownContainer"] p,
     section[data-testid="stSidebar"] div[role="radiogroup"] > label[aria-checked="true"] div[data-testid="stMarkdownContainer"] p,
     section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] p,
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked) p {
-        color: #38BDF8 !important;
+        color: #1D4ED8 !important;
         font-weight: 700 !important;
     }
     
-    /* Buttons in Dark Theme */
+    /* Professional Light Buttons */
     div.stButton > button, div[data-testid="stFormSubmitButton"] > button {
-        background: linear-gradient(135deg, #0284C7, #2563EB) !important;
+        background: #2563EB !important;
         color: #FFFFFF !important;
-        border: 1px solid #38BDF8 !important;
+        border: 1px solid #1D4ED8 !important;
         border-radius: 6px !important;
-        font-weight: 700 !important;
-        font-size: 12.5px !important;
-        padding: 7px 18px !important;
-        transition: all 0.15s ease !important;
-        box-shadow: 0 0 10px rgba(14, 165, 233, 0.25) !important;
+        font-weight: 600 !important;
+        font-size: 16px !important;
+        padding: 9px 18px !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+        transition: all 0.15s ease-in-out !important;
     }
     div.stButton > button:hover, div[data-testid="stFormSubmitButton"] > button:hover {
-        background: linear-gradient(135deg, #0369A1, #1D4ED8) !important;
-        box-shadow: 0 0 16px rgba(14, 165, 233, 0.45) !important;
-        color: #FFFFFF !important;
+        background: #1D4ED8 !important;
+        border-color: #1E40AF !important;
+        box-shadow: 0 2px 4px rgba(37, 99, 235, 0.15) !important;
     }
     
-    /* Download Buttons */
-    div.stDownloadButton > button {
-        background: #1E293B !important;
-        color: #38BDF8 !important;
-        border: 1px solid rgba(56, 189, 248, 0.3) !important;
+    /* Inputs, Selectboxes, and Filter Controls */
+    input, select, textarea, div[data-baseweb="select"] > div {
+        background-color: #FFFFFF !important;
+        border-color: #CBD5E1 !important;
+        color: #0F172A !important;
         border-radius: 6px !important;
-        font-weight: 600 !important;
-        font-size: 12.5px !important;
-        padding: 7px 16px !important;
-        transition: all 0.15s ease !important;
+        font-size: 16px !important;
     }
-    div.stDownloadButton > button:hover {
-        background: #273549 !important;
-        border-color: #38BDF8 !important;
-        color: #7DD3FC !important;
+    div[data-testid="stWidgetLabel"] label, div[data-testid="stWidgetLabel"] p {
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        color: #334155 !important;
     }
     
-    /* Tabs Styling */
-    div[data-testid="stTabs"] button[role="tab"] {
-        color: #94A3B8 !important;
-        font-weight: 500 !important;
-        font-size: 12.5px !important;
-        padding: 8px 14px !important;
-        border-bottom: 2px solid transparent !important;
-    }
-    div[data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
-        color: #38BDF8 !important;
-        border-bottom: 2px solid #38BDF8 !important;
+    /* Metric components */
+    div[data-testid="stMetricValue"] {
+        font-size: 30px !important;
         font-weight: 700 !important;
+        color: #0F172A !important;
+    }
+    div[data-testid="stMetricLabel"] {
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        color: #64748B !important;
     }
     
-    /* Form Inputs and Selectboxes */
-    label[data-testid="stWidgetLabel"] p {
-        color: #F8FAFC !important;
-        font-weight: 600 !important;
-        font-size: 12px !important;
+    /* Clean Table Styling */
+    div[data-testid="stDataFrame"] {
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 6px !important;
     }
     
     /* Risk Meter Bar */
     .risk-meter {
         width: 100%;
-        height: 8px;
-        background: #1E293B;
-        border-radius: 4px;
+        height: 10px;
+        background: #E2E8F0;
+        border-radius: 5px;
         overflow: hidden;
         margin: 8px 0 6px 0;
     }
     .risk-meter-fill {
         height: 100%;
-        border-radius: 4px;
+        border-radius: 5px;
         transition: width 0.3s ease;
     }
     
-    /* Dark Disclaimer Callout */
+    /* Restrained Prototype Disclaimer Callout */
     .prototype-disclaimer {
-        background: rgba(15, 23, 42, 0.7);
-        border: 1px solid #1E293B;
-        border-left: 3px solid #38BDF8;
-        padding: 10px 14px;
-        border-radius: 4px;
-        font-size: 11.5px;
-        color: #94A3B8;
-        margin-bottom: 14px;
-        line-height: 1.5;
+        background: #EFF6FF;
+        border: 1px solid #BFDBFE;
+        border-left: 4px solid #2563EB;
+        padding: 14px 18px;
+        border-radius: 6px;
+        font-size: 15px !important;
+        color: #1E3A8A;
+        margin-bottom: 16px;
+        line-height: 1.55;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# CHART LAYOUT HELPER (POLISHED MODERN FINTECH STYLING)
+# CHART LAYOUT HELPER (POLISHED LIGHT ANALYTICS STYLING)
 # -----------------------------------------------------------------------------
 def apply_chart_layout(fig, title: str = "", height: int = 280):
     fig.update_layout(
@@ -536,19 +561,19 @@ def apply_chart_layout(fig, title: str = "", height: int = 280):
             "x": 0.02,
             "xanchor": "left",
             "yanchor": "top",
-            "font": {"size": 13, "color": COLOR_TEXT_MAIN, "family": "Plus Jakarta Sans, sans-serif", "weight": "bold"}
+            "font": {"size": 18, "color": COLOR_TEXT_MAIN, "family": "Plus Jakarta Sans, sans-serif", "weight": "bold"}
         },
-        margin={"l": 38, "r": 20, "t": 38 if title else 22, "b": 35},
+        margin={"l": 45, "r": 20, "t": 44 if title else 24, "b": 40},
         height=height,
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font={"family": "Plus Jakarta Sans, sans-serif", "size": 11, "color": COLOR_TEXT_MUTED},
+        paper_bgcolor="#FFFFFF",
+        plot_bgcolor="#FFFFFF",
+        font={"family": "Plus Jakarta Sans, sans-serif", "size": 14, "color": COLOR_TEXT_MUTED},
         hoverlabel={
             "bgcolor": "#0F172A",
             "bordercolor": COLOR_PRIMARY,
-            "font_size": 11,
+            "font_size": 14,
             "font_family": "Plus Jakarta Sans, sans-serif",
-            "font_color": "#F8FAFC"
+            "font_color": "#FFFFFF"
         },
         legend={
             "orientation": "h",
@@ -556,41 +581,43 @@ def apply_chart_layout(fig, title: str = "", height: int = 280):
             "y": 1.02,
             "xanchor": "right",
             "x": 1,
-            "font": {"size": 10.5, "color": "#CBD5E1"},
-            "bgcolor": "rgba(17, 24, 39, 0.7)",
-            "bordercolor": "rgba(255, 255, 255, 0.08)",
+            "font": {"size": 14, "color": "#334155"},
+            "bgcolor": "#FFFFFF",
+            "bordercolor": "#E2E8F0",
             "borderwidth": 1
         }
     )
     fig.update_xaxes(
         showgrid=True,
         gridwidth=1,
-        gridcolor="rgba(255, 255, 255, 0.06)",
+        gridcolor="#F1F5F9",
         zeroline=False,
-        tickfont={"size": 10, "color": COLOR_TEXT_MUTED}
+        tickfont={"size": 14, "color": COLOR_TEXT_MUTED},
+        title={"font": {"size": 15, "color": COLOR_TEXT_MAIN}}
     )
     fig.update_yaxes(
         showgrid=True,
         gridwidth=1,
-        gridcolor="rgba(255, 255, 255, 0.06)",
+        gridcolor="#F1F5F9",
         zeroline=False,
-        tickfont={"size": 10, "color": COLOR_TEXT_MUTED}
+        tickfont={"size": 14, "color": COLOR_TEXT_MUTED},
+        title={"font": {"size": 15, "color": COLOR_TEXT_MAIN}}
     )
     return fig
 
 # -----------------------------------------------------------------------------
-# SIDEBAR NAVIGATION (STYLISH FINTECH DARK DESIGN)
+# SIDEBAR NAVIGATION (CLEAN, COMPACT LIGHT ANALYTICS MENU)
 # -----------------------------------------------------------------------------
 with st.sidebar:
     st.markdown("""
-    <div style="padding: 2px 2px 10px 2px; border-bottom: 1px solid #1E293B; margin-bottom: 10px;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #0284C7, #2563EB); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; color: #FFFFFF; font-weight: 800; flex-shrink: 0; box-shadow: 0 0 12px rgba(14, 165, 233, 0.4);">
+    <div style="padding: 4px 2px 14px 2px; border-bottom: 1px solid #E2E8F0; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 36px; height: 36px; background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #2563EB; font-weight: 700; flex-shrink: 0;">
                 🛡️
             </div>
             <div style="overflow: hidden;">
-                <div style="font-size: 13.5px; font-weight: 800; color: #F8FAFC; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">FRAUD SYSTEM</div>
-                <div style="font-size: 10.5px; color: #38BDF8; font-weight: 600;">Academic Prototype</div>
+                <div style="font-size: 16px; font-weight: 700; color: #0F172A; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Financial Fraud Detection</div>
+                <div style="font-size: 13px; color: #2563EB; font-weight: 600;">Academic Prototype</div>
             </div>
         </div>
     </div>
@@ -614,38 +641,35 @@ with st.sidebar:
     )
     
     st.markdown("""
-    <div style="background: #111827; border-radius: 6px; padding: 11px; border: 1px solid #1E293B; font-size: 11px; margin-top: 14px;">
-        <div style="font-weight: 700; color: #F8FAFC; margin-bottom: 7px; display: flex; justify-content: space-between; align-items: center;">
-            <span style="letter-spacing: 0.04em;">SYSTEM TELEMETRY</span>
-            <span style="background: rgba(56, 189, 248, 0.15); color: #38BDF8; border: 1px solid rgba(56, 189, 248, 0.35); padding: 1px 6px; border-radius: 3px; font-size: 9.5px; font-weight: 700;">ACTIVE</span>
+    <div style="background: #F8FAFC; border-radius: 6px; padding: 12px; border: 1px solid #E2E8F0; font-size: 13.5px; margin-top: 16px;">
+        <div style="font-weight: 700; color: #0F172A; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="letter-spacing: 0.02em; font-size: 13px;">SYSTEM TELEMETRY</span>
+            <span style="background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 700;">ACTIVE</span>
         </div>
-        <div style="color: #94A3B8; margin-bottom: 4px; display: flex; justify-content: space-between;">
+        <div style="color: #64748B; margin-bottom: 5px; display: flex; justify-content: space-between;">
             <span>Dataset</span>
-            <span style="color: #F8FAFC; font-weight: 600;">50,000 Records</span>
+            <span style="color: #0F172A; font-weight: 600;">50,000 Records</span>
         </div>
-        <div style="color: #94A3B8; margin-bottom: 4px; display: flex; justify-content: space-between;">
+        <div style="color: #64748B; margin-bottom: 5px; display: flex; justify-content: space-between;">
             <span>Classifier</span>
-            <span style="color: #F8FAFC; font-weight: 600;">Decision Tree (D12)</span>
+            <span style="color: #0F172A; font-weight: 600;">Decision Tree (D12)</span>
         </div>
-        <div style="color: #94A3B8; margin-bottom: 4px; display: flex; justify-content: space-between;">
+        <div style="color: #64748B; margin-bottom: 5px; display: flex; justify-content: space-between;">
             <span>Features</span>
-            <span style="color: #F8FAFC; font-weight: 600;">12 Pipeline Inputs</span>
+            <span style="color: #0F172A; font-weight: 600;">12 Pipeline Inputs</span>
         </div>
-        <div style="color: #94A3B8; margin-bottom: 4px; display: flex; justify-content: space-between;">
+        <div style="color: #64748B; margin-bottom: 5px; display: flex; justify-content: space-between;">
             <span>Currency</span>
-            <span style="color: #F8FAFC; font-weight: 600;">₹ INR</span>
+            <span style="color: #0F172A; font-weight: 600;">₹ INR</span>
         </div>
-        <div style="color: #94A3B8; margin-bottom: 4px; display: flex; justify-content: space-between;">
-            <span>UI Mode</span>
-            <span style="color: #38BDF8; font-weight: 700;">Dark Theme v2.0</span>
-        </div>
-        <div style="margin-top: 6px; padding-top: 5px; border-top: 1px solid #1E293B; color: #64748B; font-size: 10px; text-align: center;">
-            Synthetic Benchmark Evaluation
+        <div style="color: #64748B; margin-bottom: 5px; display: flex; justify-content: space-between;">
+            <span>Theme</span>
+            <span style="color: #2563EB; font-weight: 700;">Light Analytics</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-# Top Ribbon Bar
+# Top Context Ribbon
 st.markdown("""
 <div class="app-top-ribbon">
     <div class="ribbon-left">
@@ -655,9 +679,9 @@ st.markdown("""
         </div>
     </div>
     <div class="ribbon-right">
-        <span>Dataset: <strong style="color: #F8FAFC;">synthetic_fraud_dataset1.csv</strong></span>
+        <span>Dataset: <strong style="color: #0F172A;">synthetic_fraud_dataset1.csv</strong></span>
         <span class="ribbon-tag">₹ Indian Rupees (INR)</span>
-        <span class="ribbon-tag" style="color: #34D399; font-weight: 600; border-color: rgba(16, 185, 129, 0.35); background: rgba(16, 185, 129, 0.15);">● System Live</span>
+        <span class="ribbon-tag" style="color: #15803D; font-weight: 600; border-color: #BBF7D0; background: #F0FDF4;">● System Live</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -682,7 +706,7 @@ if selected_nav == "📊 Overview":
     """, unsafe_allow_html=True)
     
     # Fast Slicer Controls with Date Range Filter
-    st.markdown("<div class='app-card-box' style='padding: 12px 18px; margin-bottom: 14px;'>", unsafe_allow_html=True)
+    st.markdown("<div class='app-card-box' style='padding: 14px 20px; margin-bottom: 16px;'>", unsafe_allow_html=True)
     f_col1, f_col2, f_col3, f_col4 = st.columns([1.5, 1, 1, 1])
     
     min_date_val = df_raw["Date"].min().date()
@@ -715,7 +739,7 @@ if selected_nav == "📊 Overview":
         )
     st.markdown("</div>", unsafe_allow_html=True)
     
-    # Ultra-Fast Vectorized Filtering (Milliseconds execution)
+    # Fast Vectorized Filtering (<5ms)
     filtered_df = df_raw
     has_filter = False
     
@@ -745,7 +769,7 @@ if selected_nav == "📊 Overview":
         <div class="app-kpi-card">
             <div class="app-kpi-label">TOTAL TRANSACTIONS</div>
             <div class="app-kpi-val">{kpis['total_transactions']:,}</div>
-            <div class="app-kpi-footer"><span class="app-tag-neutral">Scope</span><span>Filtered items</span></div>
+            <div class="app-kpi-footer"><span class="app-tag-neutral">Scope</span><span>Filtered records</span></div>
         </div>
         """, unsafe_allow_html=True)
     with k2:
@@ -791,20 +815,20 @@ if selected_nav == "📊 Overview":
         
     st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
     
-    # Model Risk Calibration & Summary Banner
+    # Model Risk Calibration & Governance Notice
     st.markdown(f"""
     <div class='prototype-disclaimer'>
         <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px;">
             <div>
-                <strong style="color: #F8FAFC;">Model Risk Calibration & Governance:</strong>
+                <strong style="color: #0F172A;">Model Risk Calibration & Governance:</strong>
                 Transactions are categorized into 3 calibrated tiers based on estimated probability:
                 <span class="app-tag-fraud">High Risk (≥65%)</span>,
-                <span class="app-tag-neutral" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.35); color: #FBBF24;">Medium Risk (40–65%)</span>, and
+                <span class="app-tag-neutral" style="background: #FFFBEB; border-color: #FDE68A; color: #B45309;">Medium Risk (40–65%)</span>, and
                 <span class="app-tag-legit">Low Risk (&lt;40%)</span>.
-                Default binary decision threshold: <strong>0.50</strong>.
+                Default binary decision threshold: <strong>0.50</strong>. Model estimates are academic outputs, not confirmed legal findings.
             </div>
             <div>
-                <span style="font-size: 10.5px; color: #38BDF8; font-weight: 600;">Academic Prototype • Synthetic Benchmark</span>
+                <span style="font-size: 13px; color: #2563EB; font-weight: 600;">Academic Prototype • Synthetic Benchmark</span>
             </div>
         </div>
     </div>
@@ -833,14 +857,14 @@ if selected_nav == "📊 Overview":
             x=monthly_grp["YearMonth"],
             y=monthly_grp["Legitimate"],
             name="Legitimate (Class 0)",
-            marker=dict(color=COLOR_LEGIT, cornerradius=4, line=dict(width=1, color="rgba(255,255,255,0.06)")),
+            marker=dict(color=COLOR_LEGIT, cornerradius=4, line=dict(width=1, color="rgba(0,0,0,0.06)")),
             hovertemplate="<b>%{x}</b><br>Legitimate: <b>%{y:,}</b> txns<extra></extra>"
         ))
         fig_trend.add_trace(go.Bar(
             x=monthly_grp["YearMonth"],
             y=monthly_grp["Fraud"],
             name="Fraud-Labelled (Class 1)",
-            marker=dict(color=COLOR_FRAUD, cornerradius=4, line=dict(width=1, color="rgba(255,255,255,0.06)")),
+            marker=dict(color=COLOR_FRAUD, cornerradius=4, line=dict(width=1, color="rgba(0,0,0,0.06)")),
             hovertemplate="<b>%{x}</b><br>Fraud: <b>%{y:,}</b> txns<extra></extra>"
         ))
         fig_trend.update_layout(barmode="stack", yaxis=dict(title="Volume (Count)"))
@@ -877,9 +901,9 @@ if selected_nav == "📊 Overview":
             y=monthly_trend["Fraud_Rate"],
             mode="lines+markers",
             name="Observed Fraud Rate (%)",
-            line=dict(color=COLOR_FRAUD, shape="spline", smoothing=1.3, width=3),
+            line=dict(color=COLOR_FRAUD, shape="spline", smoothing=1.3, width=2.5),
             fill="tozeroy",
-            fillcolor="rgba(244, 63, 94, 0.08)",
+            fillcolor="rgba(220, 38, 38, 0.06)",
             marker=dict(size=7, color=COLOR_FRAUD, line=dict(width=2, color="#FFFFFF")),
             hovertemplate="<b>%{x}</b><br>Fraud Rate: <b>%{y:.2f}%</b><extra></extra>"
         ))
@@ -905,17 +929,17 @@ if selected_nav == "📊 Overview":
         fig_pie = go.Figure(data=[go.Pie(
             labels=dist_counts["Label_Name"],
             values=dist_counts["count"],
-            hole=0.66,
-            pull=[0, 0.04],
-            marker=dict(colors=[COLOR_LEGIT, COLOR_FRAUD], line=dict(color="#111827", width=3)),
+            hole=0.65,
+            pull=[0, 0.03],
+            marker=dict(colors=[COLOR_LEGIT, COLOR_FRAUD], line=dict(color="#FFFFFF", width=2)),
             textinfo="percent",
-            textfont=dict(size=11, color="#FFFFFF", family="Plus Jakarta Sans"),
+            textfont=dict(size=14, color="#FFFFFF", family="Plus Jakarta Sans"),
             hoverinfo="label+value+percent",
             direction="clockwise",
             hovertemplate="<b>%{label}</b><br>Volume: %{value:,} (%{percent})<extra></extra>"
         )])
         fig_pie.add_annotation(
-            text=f"<span style='font-size:22px; font-weight:800; color:#F8FAFC;'>{kpis['fraud_percentage']:.1f}%</span><br><span style='font-size:10.5px; color:#F43F5E; font-weight:700; letter-spacing:0.05em;'>FRAUD RATE</span>",
+            text=f"<span style='font-size:24px; font-weight:700; color:#0F172A;'>{kpis['fraud_percentage']:.1f}%</span><br><span style='font-size:12px; color:#DC2626; font-weight:700; letter-spacing:0.04em;'>FRAUD RATE</span>",
             x=0.5, y=0.5,
             showarrow=False
         )
@@ -1341,16 +1365,17 @@ elif selected_nav == "⚡ Transaction Scoring":
                 res = predictor.predict_single(record, threshold=inp_threshold)
                 prob_pct = res['fraud_probability'] * 100.0
                 card_border = res['risk_color']
-                card_bg = "rgba(244, 63, 94, 0.10)" if res['risk_tier'] == "High Risk" else ("rgba(245, 158, 11, 0.10)" if res['risk_tier'] == "Medium Risk" else "rgba(16, 185, 129, 0.10)")
+                card_bg = "#FEF2F2" if res['risk_tier'] == "High Risk" else ("#FFFBEB" if res['risk_tier'] == "Medium Risk" else "#F0FDF4")
+                card_title_color = "#991B1B" if res['risk_tier'] == "High Risk" else ("#92400E" if res['risk_tier'] == "Medium Risk" else "#166534")
                     
                 st.markdown(f"""
                 <div class='app-card-box' style='border: 1px solid {card_border}; background: {card_bg};'>
-                    <div class='app-card-header' style='border-bottom: 1px solid rgba(255,255,255,0.08);'>
-                        <div class='app-card-title' style='color: {card_border}; font-size: 14px;'>
+                    <div class='app-card-header' style='border-bottom: 1px solid rgba(0,0,0,0.06);'>
+                        <div class='app-card-title' style='color: {card_title_color}; font-size: 20px !important;'>
                             Assessment Result: {res['risk_tier'].upper()}
                         </div>
-                        <div style='font-size: 12px; font-weight: 600; color: #F8FAFC;'>
-                            Action: <span style='color: {card_border};'>{res['recommended_action']}</span>
+                        <div style='font-size: 15px; font-weight: 600; color: #0F172A;'>
+                            Action: <span style='color: {card_border}; font-weight: 700;'>{res['recommended_action']}</span>
                         </div>
                     </div>
                 """, unsafe_allow_html=True)
@@ -1358,52 +1383,52 @@ elif selected_nav == "⚡ Transaction Scoring":
                 o1, o2, o3 = st.columns(3)
                 with o1:
                     st.markdown(f"""
-                    <div style="background: #111827; border-radius: 6px; padding: 12px; border: 1px solid #1E293B; text-align: center;">
-                        <div style="font-size: 10.5px; font-weight: 700; color: #94A3B8; text-transform: uppercase;">ESTIMATED PROBABILITY</div>
-                        <div style="font-size: 28px; font-weight: 800; color: {card_border}; margin: 4px 0;">{prob_pct:.1f}%</div>
-                        <div style="font-size: 11px; color: #94A3B8;">Threshold: {res['threshold_used']*100:.0f}%</div>
+                    <div style="background: #FFFFFF; border-radius: 6px; padding: 14px; border: 1px solid #E2E8F0; text-align: center;">
+                        <div style="font-size: 14px; font-weight: 600; color: #64748B; text-transform: uppercase;">ESTIMATED PROBABILITY</div>
+                        <div style="font-size: 32px; font-weight: 800; color: {card_border}; margin: 4px 0;">{prob_pct:.1f}%</div>
+                        <div style="font-size: 13px; color: #64748B;">Decision Threshold: {res['threshold_used']*100:.0f}%</div>
                     </div>
                     """, unsafe_allow_html=True)
                 with o2:
                     binary_label = "Class 1 (Flagged Fraud)" if res['prediction'] == 1 else "Class 0 (Legitimate)"
                     st.markdown(f"""
-                    <div style="background: #111827; border-radius: 6px; padding: 12px; border: 1px solid #1E293B; text-align: center;">
-                        <div style="font-size: 10.5px; font-weight: 700; color: #94A3B8; text-transform: uppercase;">MODEL DECISION</div>
-                        <div style="font-size: 17px; font-weight: 700; color: #F8FAFC; margin: 10px 0;">{binary_label}</div>
-                        <div style="font-size: 11px; color: #94A3B8;">Decision Tree Classifier</div>
+                    <div style="background: #FFFFFF; border-radius: 6px; padding: 14px; border: 1px solid #E2E8F0; text-align: center;">
+                        <div style="font-size: 14px; font-weight: 600; color: #64748B; text-transform: uppercase;">MODEL DECISION</div>
+                        <div style="font-size: 20px; font-weight: 700; color: #0F172A; margin: 10px 0;">{binary_label}</div>
+                        <div style="font-size: 13px; color: #64748B;">Decision Tree Classifier</div>
                     </div>
                     """, unsafe_allow_html=True)
                 with o3:
                     st.markdown(f"""
-                    <div style="background: #111827; border-radius: 6px; padding: 12px; border: 1px solid #1E293B; text-align: center;">
-                        <div style="font-size: 10.5px; font-weight: 700; color: #94A3B8; text-transform: uppercase;">ASSIGNED RISK TIER</div>
-                        <div style="font-size: 20px; font-weight: 800; color: {card_border}; margin: 8px 0;">{res['risk_tier']}</div>
-                        <div style="font-size: 11px; color: #94A3B8;">Operational Priority</div>
+                    <div style="background: #FFFFFF; border-radius: 6px; padding: 14px; border: 1px solid #E2E8F0; text-align: center;">
+                        <div style="font-size: 14px; font-weight: 600; color: #64748B; text-transform: uppercase;">ASSIGNED RISK TIER</div>
+                        <div style="font-size: 24px; font-weight: 800; color: {card_border}; margin: 8px 0;">{res['risk_tier']}</div>
+                        <div style="font-size: 13px; color: #64748B;">Operational Priority</div>
                     </div>
                     """, unsafe_allow_html=True)
                     
                 st.markdown(f"""
-                <div style="margin-top: 12px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: #94A3B8;">
+                <div style="margin-top: 14px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; color: #475569;">
                         <span>Risk Score Meter</span>
                         <span>Estimated Score: {prob_pct:.1f}%</span>
                     </div>
                     <div class="risk-meter">
                         <div class="risk-meter-fill" style="width: {prob_pct}%; background: {card_border};"></div>
                     </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 10px; color: #94A3B8; font-weight: 600;">
-                        <span style="color: #10B981;">LOW (&lt;40%)</span>
-                        <span style="color: #F59E0B;">MEDIUM (40-65%)</span>
-                        <span style="color: #F43F5E;">HIGH (≥65%)</span>
+                    <div style="display: flex; justify-content: space-between; font-size: 13px; color: #64748B; font-weight: 600;">
+                        <span style="color: #16A34A;">LOW (&lt;40%)</span>
+                        <span style="color: #D97706;">MEDIUM (40-65%)</span>
+                        <span style="color: #DC2626;">HIGH (≥65%)</span>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
                 
-                st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
-                st.markdown("<div style='font-size: 12px; font-weight: 700; color: #F8FAFC; margin-bottom: 6px;'>Diagnostic Factors:</div>", unsafe_allow_html=True)
+                st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+                st.markdown("<div style='font-size: 16px; font-weight: 700; color: #0F172A; margin-bottom: 8px;'>Diagnostic Risk Triggers:</div>", unsafe_allow_html=True)
                 for factor in res["risk_factors"]:
                     st.markdown(f"""
-                    <div style="background: #111827; border: 1px solid #1E293B; border-radius: 4px; padding: 6px 12px; margin-bottom: 4px; font-size: 11.5px; color: #CBD5E1;">
+                    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 6px; padding: 8px 14px; margin-bottom: 6px; font-size: 14px; color: #334155;">
                         • {factor}
                     </div>
                     """, unsafe_allow_html=True)
@@ -1529,7 +1554,7 @@ elif selected_nav == "📦 Batch Transaction Scoring":
                     
                 st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
                 
-                # Distribution Chart & Table with Rounded Bars & Clear Data Labels
+                # Distribution Chart & Table
                 st.markdown("""
                 <div class='app-card-box'>
                     <div class='app-card-header'>
@@ -1553,9 +1578,9 @@ elif selected_nav == "📦 Batch Transaction Scoring":
                     labels={"Risk_Tier": "Risk Tier", "count": "Count"}
                 )
                 fig_tier.update_traces(
-                    marker_cornerradius=6,
+                    marker_cornerradius=4,
                     textposition="outside",
-                    textfont=dict(color="#F8FAFC", size=11, family="Plus Jakarta Sans", weight="bold"),
+                    textfont=dict(color="#0F172A", size=14, family="Plus Jakarta Sans", weight="bold"),
                     hovertemplate="<b>%{x}</b><br>Transactions: <b>%{y:,}</b><extra></extra>"
                 )
                 apply_chart_layout(fig_tier, height=240)
@@ -1684,17 +1709,23 @@ elif selected_nav == "🏆 Model Performance & Audit":
         
     st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
     
-    # Stylish Confusion Matrix Heatmap (High-Contrast Neon-Tinted Tiles)
+    # Restyled Confusion Matrix Heatmap (Clean High-Contrast Light Analytics Tiles)
     st.markdown("""
-        <div style='font-size: 13px; font-weight: 700; color: #F8FAFC; margin-bottom: 6px;'>
+        <div style='font-size: 18px; font-weight: 700; color: #0F172A; margin-bottom: 8px;'>
             Held-Out Test Confusion Matrix (7,500 Test Transactions)
         </div>
     """, unsafe_allow_html=True)
     
     cm_z = [[2568, 2522], [1202, 1208]]
     cm_labels = [
-        ["<b>TRUE NEGATIVE (TN)</b><br><span style='font-size:18px; font-weight:800; color:#F8FAFC;'>2,568</span><br><span style='color:#38BDF8; font-weight:700; font-size:12px;'>34.24% of Test</span><br><span style='color:#94A3B8; font-size:10.5px;'>Legitimate Cleared</span>", "<b>FALSE POSITIVE (FP)</b><br><span style='font-size:18px; font-weight:800; color:#F8FAFC;'>2,522</span><br><span style='color:#FBBF24; font-weight:700; font-size:12px;'>33.63% of Test</span><br><span style='color:#94A3B8; font-size:10.5px;'>False Alarm (Flagged)</span>"],
-        ["<b>FALSE NEGATIVE (FN)</b><br><span style='font-size:18px; font-weight:800; color:#F8FAFC;'>1,202</span><br><span style='color:#F87171; font-weight:700; font-size:12px;'>16.03% of Test</span><br><span style='color:#94A3B8; font-size:10.5px;'>Missed Fraud</span>", "<b>TRUE POSITIVE (TP)</b><br><span style='font-size:18px; font-weight:800; color:#F8FAFC;'>1,208</span><br><span style='color:#4ADE80; font-weight:700; font-size:12px;'>16.11% of Test</span><br><span style='color:#94A3B8; font-size:10.5px;'>Fraud Correctly Flagged</span>"]
+        [
+            "<b>TRUE NEGATIVE (TN)</b><br><span style='font-size:20px; font-weight:700; color:#0F172A;'>2,568</span><br><span style='color:#0369A1; font-weight:600; font-size:14px;'>34.24% of Test</span><br><span style='color:#475569; font-size:13px;'>Legitimate Cleared</span>",
+            "<b>FALSE POSITIVE (FP)</b><br><span style='font-size:20px; font-weight:700; color:#0F172A;'>2,522</span><br><span style='color:#B45309; font-weight:600; font-size:14px;'>33.63% of Test</span><br><span style='color:#475569; font-size:13px;'>False Alarm (Flagged)</span>"
+        ],
+        [
+            "<b>FALSE NEGATIVE (FN)</b><br><span style='font-size:20px; font-weight:700; color:#0F172A;'>1,202</span><br><span style='color:#DC2626; font-weight:600; font-size:14px;'>16.03% of Test</span><br><span style='color:#475569; font-size:13px;'>Missed Fraud</span>",
+            "<b>TRUE POSITIVE (TP)</b><br><span style='font-size:20px; font-weight:700; color:#0F172A;'>1,208</span><br><span style='color:#15803D; font-weight:600; font-size:14px;'>16.11% of Test</span><br><span style='color:#475569; font-size:13px;'>Fraud Correctly Flagged</span>"
+        ]
     ]
     
     fig_cm = go.Figure(data=go.Heatmap(
@@ -1703,8 +1734,8 @@ elif selected_nav == "🏆 Model Performance & Audit":
         y=["Actual Legitimate (Class 0)", "Actual Fraud (Class 1)"],
         text=cm_labels,
         texttemplate="%{text}",
-        textfont={"size": 11, "family": "Plus Jakarta Sans, sans-serif"},
-        colorscale=[[0, "#0B1528"], [0.35, "#172554"], [0.7, "#0369A1"], [1, "#0284C7"]],
+        textfont={"size": 14, "family": "Plus Jakarta Sans, sans-serif"},
+        colorscale=[[0, "#F0F9FF"], [0.35, "#BAE6FD"], [0.7, "#38BDF8"], [1, "#0284C7"]],
         showscale=False,
         xgap=4,
         ygap=4
@@ -1746,7 +1777,7 @@ elif selected_nav == "🏆 Model Performance & Audit":
         y="Score",
         color="Model",
         barmode="group",
-        color_discrete_sequence=[COLOR_MUTED, COLOR_INDIGO, COLOR_PRIMARY, COLOR_PURPLE]
+        color_discrete_sequence=[COLOR_NAVY, COLOR_PRIMARY, COLOR_TEAL, COLOR_MUTED]
     )
     fig_comp.update_traces(
         marker_cornerradius=4,
@@ -1763,7 +1794,7 @@ elif selected_nav == "🏆 Model Performance & Audit":
         <div class='app-card-header'>
             <div class='app-card-title'>3. Root Cause Investigation: Noise & Metric Analysis</div>
         </div>
-        <div style="font-size: 12.5px; line-height: 1.6; color: #CBD5E1;">
+        <div style="font-size: 15px; line-height: 1.6; color: #334155;">
             <p><strong>Empirical Investigation Findings:</strong></p>
             <ul>
                 <li><strong>Why ROC-AUC is close to 0.50:</strong> 
@@ -1930,10 +1961,10 @@ elif selected_nav == "📁 Project Files & Artifacts":
             with c_info:
                 st.markdown(f"""
                 <div style="padding: 4px 0;">
-                    <div style="font-size: 13px; font-weight: 700; color: #F8FAFC; font-family: 'JetBrains Mono', monospace;">
+                    <div style="font-size: 16px; font-weight: 700; color: #0F172A; font-family: 'JetBrains Mono', monospace;">
                         {os.path.basename(file_path)} <span class="app-tag-neutral">{size_str}</span>
                     </div>
-                    <div style="font-size: 11.5px; color: #94A3B8; margin-top: 2px;">{description}</div>
+                    <div style="font-size: 14px; color: #64748B; margin-top: 2px;">{description}</div>
                 </div>
                 """, unsafe_allow_html=True)
             with c_action:
@@ -1944,7 +1975,7 @@ elif selected_nav == "📁 Project Files & Artifacts":
                     mime=mime,
                     use_container_width=True
                 )
-            st.markdown("<div style='height: 1px; background: #1E293B; margin: 6px 0;'></div>", unsafe_allow_html=True)
+            st.markdown("<div style='height: 1px; background: #E2E8F0; margin: 8px 0;'></div>", unsafe_allow_html=True)
         else:
             st.warning(f"File {file_path} not found.")
 
@@ -2000,10 +2031,10 @@ elif selected_nav == "📁 Project Files & Artifacts":
             with c_info:
                 st.markdown(f"""
                 <div style="padding: 4px 0;">
-                    <div style="font-size: 13px; font-weight: 700; color: #F8FAFC; font-family: 'JetBrains Mono', monospace;">
+                    <div style="font-size: 16px; font-weight: 700; color: #0F172A; font-family: 'JetBrains Mono', monospace;">
                         {file_path} <span class="app-tag-neutral">{len(code_text.splitlines())} Lines</span>
                     </div>
-                    <div style="font-size: 11.5px; color: #94A3B8; margin-top: 2px;">{description}</div>
+                    <div style="font-size: 14px; color: #64748B; margin-top: 2px;">{description}</div>
                 </div>
                 """, unsafe_allow_html=True)
             with c_action:
@@ -2014,7 +2045,7 @@ elif selected_nav == "📁 Project Files & Artifacts":
                     mime="text/plain",
                     use_container_width=True
                 )
-            st.markdown("<div style='height: 1px; background: #1E293B; margin: 6px 0;'></div>", unsafe_allow_html=True)
+            st.markdown("<div style='height: 1px; background: #E2E8F0; margin: 8px 0;'></div>", unsafe_allow_html=True)
 
     script_row("run_dashboard.py", "Dashboard launcher script.")
     script_row("app.py", "Main Streamlit dashboard application.")
@@ -2055,7 +2086,7 @@ elif selected_nav == "🏛️ About & Governance":
         <div class='app-card-header'>
             <div class='app-card-title'>Project Purpose & Scope</div>
         </div>
-        <div style="font-size: 12.5px; line-height: 1.6; color: #CBD5E1;">
+        <div style="font-size: 15px; line-height: 1.6; color: #334155;">
             <p>Developed as an <strong>educational prototype</strong> for the <strong>Zidio Development Internship</strong> in Data Science & Machine Learning. The project demonstrates an end-to-end financial fraud detection workflow, combining statistical exploratory data analysis, machine learning model evaluation, strict schema validation, and interactive risk reporting formatted in Indian Rupees (₹ INR).</p>
         </div>
     </div>
@@ -2066,7 +2097,7 @@ elif selected_nav == "🏛️ About & Governance":
         <div class='app-card-header'>
             <div class='app-card-title'>Dataset & Data Integrity</div>
         </div>
-        <div style="font-size: 12.5px; line-height: 1.6; color: #CBD5E1;">
+        <div style="font-size: 15px; line-height: 1.6; color: #334155;">
             <ul>
                 <li><strong>Dataset:</strong> <code>synthetic_fraud_dataset1.csv</code> (50,000 synthetic transactions, 14 raw columns).</li>
                 <li><strong>Class Balance:</strong> 16,067 fraud instances (32.13%) vs. 33,933 legitimate instances (67.87%).</li>
@@ -2091,7 +2122,7 @@ elif selected_nav == "🏛️ About & Governance":
         <div class='app-card-header'>
             <div class='app-card-title'>Pipeline Architecture & Testing</div>
         </div>
-        <div style="font-size: 12.5px; line-height: 1.6; color: #CBD5E1;">
+        <div style="font-size: 15px; line-height: 1.6; color: #334155;">
             <ul>
                 <li><strong>Preprocessing:</strong> Scikit-Learn <code>ColumnTransformer</code> with 7 numeric features (median imputer + StandardScaler) and 5 categorical features (mode imputer + OneHotEncoder).</li>
                 <li><strong>Classifier:</strong> <code>DecisionTreeClassifier(max_depth=12, class_weight='balanced', random_state=42)</code>.</li>
