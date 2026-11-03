@@ -33,18 +33,18 @@ class FraudPredictor:
         fraud_prob = float(probs[1])
         is_fraud = int(fraud_prob >= threshold)
         
-        # Determine risk tier (Consistent visual indicator colors for light analytics theme)
+        # Determine risk tier (Decent modern analytics palette: Slate Blue, Amber, Coral Rose)
         if fraud_prob >= 0.65:
             risk_tier = "High Risk"
-            risk_color = "#DC2626"  # Restrained Red
+            risk_color = "#E11D48"  # Refined Coral Rose
             action = "Flag for Immediate Analyst Review"
         elif fraud_prob >= 0.40:
             risk_tier = "Medium Risk"
-            risk_color = "#D97706"  # Restrained Amber
+            risk_color = "#D97706"  # Refined Warm Amber
             action = "Secondary Verification Recommended"
         else:
             risk_tier = "Low Risk"
-            risk_color = "#16A34A"  # Restrained Green
+            risk_color = "#2563EB"  # Refined Slate Blue
             action = "Approve Standard Processing"
         
         # Identify domain heuristic risk factors

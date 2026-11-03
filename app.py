@@ -2,7 +2,8 @@
 Financial Fraud Detection System - Streamlit Dashboard
 Zidio Development Internship Capstone Project
 
-Multi-Mode Analytics Dashboard
+Multi-Mode Analytics Dashboard (Decent Fintech Color Harmony)
+- Executive Palette: Royal Slate Blue (Legitimate) & Refined Coral Rose (Fraud)
 - Dynamic Theme Mode: Light Analytics (Default) & Dark Obsidian / Fintech
 - Currency Scale Formatter: Standard (₹ INR) vs Compact (Lakhs / Crores)
 - Layout Density Control: Comfortable vs High-Density Compact
@@ -177,15 +178,15 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# DYNAMIC COLOR PALETTE & FORMATTERS
+# DYNAMIC COLOR PALETTE & FORMATTERS (DECENT MODERN FINTECH HARMONY)
 # -----------------------------------------------------------------------------
 if is_dark:
     COLOR_PRIMARY = "#38BDF8"   # Electric Sky Blue
     COLOR_NAVY = "#818CF8"      # Soft Indigo
-    COLOR_TEAL = "#2DD4BF"      # Vibrant Teal
-    COLOR_LEGIT = "#10B981"     # Vibrant Mint Emerald Green
-    COLOR_FRAUD = "#F43F5E"     # Radiant Coral-Rose
-    COLOR_AMBER = "#F59E0B"     # Radiant Amber
+    COLOR_TEAL = "#2DD4BF"      # Soft Cyan-Teal
+    COLOR_LEGIT = "#38BDF8"     # Decent Slate Sky Blue (Class 0 - Legitimate)
+    COLOR_FRAUD = "#FB7185"     # Decent Soft Coral Rose (Class 1 - Potential Fraud)
+    COLOR_AMBER = "#FBBF24"     # Decent Soft Honey Amber (Medium Risk)
     COLOR_MUTED = "#64748B"     # Slate Gray
     COLOR_CARD_BG = "#111827"   # Deep Slate Surface
     COLOR_PAGE_BG = "#0B0F19"   # Obsidian Dark Canvas
@@ -201,11 +202,11 @@ if is_dark:
     GRID_COLOR = "rgba(255, 255, 255, 0.08)"
 else:
     COLOR_PRIMARY = "#2563EB"   # Professional Blue
-    COLOR_NAVY = "#1E3A8A"      # Deep Navy
-    COLOR_TEAL = "#0D9488"      # Balanced Teal
-    COLOR_LEGIT = "#16A34A"     # Restrained Emerald Green
-    COLOR_FRAUD = "#DC2626"     # Restrained Red
-    COLOR_AMBER = "#D97706"     # Restrained Amber
+    COLOR_NAVY = "#1E3A8A"      # Deep Navy Accent
+    COLOR_TEAL = "#0D9488"      # Balanced Teal Accent
+    COLOR_LEGIT = "#2563EB"     # Decent Royal Slate Blue (Class 0 - Legitimate)
+    COLOR_FRAUD = "#E11D48"     # Decent Coral Rose (Class 1 - Potential Fraud)
+    COLOR_AMBER = "#D97706"     # Decent Honey Amber (Medium Risk)
     COLOR_MUTED = "#64748B"     # Slate Gray
     COLOR_CARD_BG = "#FFFFFF"   # Pure White Card Surface
     COLOR_PAGE_BG = "#F8FAFC"   # Very Light Gray Page Canvas
@@ -499,9 +500,9 @@ st.markdown(f"""
         border-radius: 4px;
         font-weight: 700;
         font-size: 13px !important;
-        background: {'rgba(16, 185, 129, 0.15)' if is_dark else '#F0FDF4'};
-        color: {'#34D399' if is_dark else '#15803D'};
-        border: 1px solid {'rgba(16, 185, 129, 0.35)' if is_dark else '#BBF7D0'};
+        background: {'rgba(56, 189, 248, 0.15)' if is_dark else '#EFF6FF'};
+        color: {'#38BDF8' if is_dark else '#1D4ED8'};
+        border: 1px solid {'rgba(56, 189, 248, 0.35)' if is_dark else '#BFDBFE'};
     }}
     .app-tag-fraud {{
         display: inline-block;
@@ -509,9 +510,9 @@ st.markdown(f"""
         border-radius: 4px;
         font-weight: 700;
         font-size: 13px !important;
-        background: {'rgba(244, 63, 94, 0.15)' if is_dark else '#FEF2F2'};
-        color: {'#FB7185' if is_dark else '#B91C1C'};
-        border: 1px solid {'rgba(244, 63, 94, 0.35)' if is_dark else '#FECACA'};
+        background: {'rgba(251, 113, 133, 0.15)' if is_dark else '#FFF1F2'};
+        color: {'#FB7185' if is_dark else '#BE123C'};
+        border: 1px solid {'rgba(251, 113, 133, 0.35)' if is_dark else '#FECDD3'};
     }}
     
     /* Sidebar Surface */
@@ -736,7 +737,7 @@ st.markdown(f"""
     <div class="ribbon-right">
         <span>Dataset: <strong style="color: {COLOR_TEXT_MAIN};">synthetic_fraud_dataset1.csv</strong></span>
         <span class="ribbon-tag">₹ Indian Rupees (INR)</span>
-        <span class="ribbon-tag" style="color: {'#34D399' if is_dark else '#15803D'}; font-weight: 600; border-color: {'rgba(16, 185, 129, 0.35)' if is_dark else '#BBF7D0'}; background: {'rgba(16, 185, 129, 0.15)' if is_dark else '#F0FDF4'};">● System Live</span>
+        <span class="ribbon-tag" style="color: {'#38BDF8' if is_dark else '#0284C7'}; font-weight: 600; border-color: {'rgba(56, 189, 248, 0.35)' if is_dark else '#BAE6FD'}; background: {'rgba(56, 189, 248, 0.12)' if is_dark else '#F0F9FF'};">● System Live</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -1012,7 +1013,7 @@ if selected_nav == "📊 Overview":
             name="Observed Fraud Rate (%)",
             line=dict(color=COLOR_FRAUD, shape="spline", smoothing=1.3, width=2.5),
             fill="tozeroy",
-            fillcolor="rgba(244, 63, 94, 0.08)" if is_dark else "rgba(220, 38, 38, 0.06)",
+            fillcolor="rgba(251, 113, 133, 0.08)" if is_dark else "rgba(225, 29, 72, 0.05)",
             marker=dict(size=7, color=COLOR_FRAUD, line=dict(width=2, color="#FFFFFF")),
             hovertemplate="<b>%{x}</b><br>Fraud Rate: <b>%{y:.2f}%</b><extra></extra>"
         ))
@@ -1386,13 +1387,13 @@ elif selected_nav == "⚡ Transaction Scoring":
         ps_c1, ps_c2, ps_c3 = st.columns(3)
         preset_choice = None
         with ps_c1:
-            if st.button("🟢 Standard Low-Risk POS Grocery (₹34.50)", use_container_width=True):
+            if st.button("🔹 Standard Low-Risk POS Grocery (₹34.50)", use_container_width=True):
                 preset_choice = "low"
         with ps_c2:
-            if st.button("🔵 Moderate Online Electronics Order (₹480.00)", use_container_width=True):
+            if st.button("🔸 Moderate Online Electronics Order (₹480.00)", use_container_width=True):
                 preset_choice = "medium"
         with ps_c3:
-            if st.button("🔴 High-Velocity Travel Anomaly (₹850.00)", use_container_width=True):
+            if st.button("🔺 High-Velocity Travel Anomaly (₹850.00)", use_container_width=True):
                 preset_choice = "high"
         st.markdown("</div>", unsafe_allow_html=True)
         
@@ -1476,13 +1477,13 @@ elif selected_nav == "⚡ Transaction Scoring":
                 card_border = res['risk_color']
                 
                 if is_dark:
-                    card_bg = "rgba(244, 63, 94, 0.12)" if res['risk_tier'] == "High Risk" else ("rgba(245, 158, 11, 0.12)" if res['risk_tier'] == "Medium Risk" else "rgba(16, 185, 129, 0.12)")
-                    card_title_color = "#FB7185" if res['risk_tier'] == "High Risk" else ("#FBBF24" if res['risk_tier'] == "Medium Risk" else "#34D399")
+                    card_bg = "rgba(251, 113, 133, 0.12)" if res['risk_tier'] == "High Risk" else ("rgba(245, 158, 11, 0.12)" if res['risk_tier'] == "Medium Risk" else "rgba(56, 189, 248, 0.12)")
+                    card_title_color = "#FB7185" if res['risk_tier'] == "High Risk" else ("#FBBF24" if res['risk_tier'] == "Medium Risk" else "#38BDF8")
                     inner_tile_bg = "#111827"
                     factor_bg = "#111827"
                 else:
-                    card_bg = "#FEF2F2" if res['risk_tier'] == "High Risk" else ("#FFFBEB" if res['risk_tier'] == "Medium Risk" else "#F0FDF4")
-                    card_title_color = "#991B1B" if res['risk_tier'] == "High Risk" else ("#92400E" if res['risk_tier'] == "Medium Risk" else "#166534")
+                    card_bg = "#FFF1F2" if res['risk_tier'] == "High Risk" else ("#FFFBEB" if res['risk_tier'] == "Medium Risk" else "#EFF6FF")
+                    card_title_color = "#BE123C" if res['risk_tier'] == "High Risk" else ("#B45309" if res['risk_tier'] == "Medium Risk" else "#1D4ED8")
                     inner_tile_bg = "#FFFFFF"
                     factor_bg = "#FFFFFF"
                     
@@ -1827,7 +1828,7 @@ elif selected_nav == "🏆 Model Performance & Audit":
         
     st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
     
-    # Restyled Confusion Matrix Heatmap
+    # Restyled Confusion Matrix Heatmap (Decent High-Contrast Modern Heatmap)
     st.markdown(f"""
         <div style='font-size: 18px; font-weight: 700; color: {COLOR_TEXT_MAIN}; margin-bottom: 8px;'>
             Held-Out Test Confusion Matrix (7,500 Test Transactions)
@@ -1843,7 +1844,7 @@ elif selected_nav == "🏆 Model Performance & Audit":
             ],
             [
                 "<b>FALSE NEGATIVE (FN)</b><br><span style='font-size:20px; font-weight:700; color:#F8FAFC;'>1,202</span><br><span style='color:#FB7185; font-weight:600; font-size:14px;'>16.03% of Test</span><br><span style='color:#94A3B8; font-size:13px;'>Missed Fraud</span>",
-                "<b>TRUE POSITIVE (TP)</b><br><span style='font-size:20px; font-weight:700; color:#F8FAFC;'>1,208</span><br><span style='color:#34D399; font-weight:600; font-size:14px;'>16.11% of Test</span><br><span style='color:#94A3B8; font-size:13px;'>Fraud Correctly Flagged</span>"
+                "<b>TRUE POSITIVE (TP)</b><br><span style='font-size:20px; font-weight:700; color:#F8FAFC;'>1,208</span><br><span style='color:#818CF8; font-weight:600; font-size:14px;'>16.11% of Test</span><br><span style='color:#94A3B8; font-size:13px;'>Fraud Correctly Flagged</span>"
             ]
         ]
         cm_scale = [[0, "#0B1528"], [0.35, "#172554"], [0.7, "#0369A1"], [1, "#0284C7"]]
@@ -1854,8 +1855,8 @@ elif selected_nav == "🏆 Model Performance & Audit":
                 "<b>FALSE POSITIVE (FP)</b><br><span style='font-size:20px; font-weight:700; color:#0F172A;'>2,522</span><br><span style='color:#B45309; font-weight:600; font-size:14px;'>33.63% of Test</span><br><span style='color:#475569; font-size:13px;'>False Alarm (Flagged)</span>"
             ],
             [
-                "<b>FALSE NEGATIVE (FN)</b><br><span style='font-size:20px; font-weight:700; color:#0F172A;'>1,202</span><br><span style='color:#DC2626; font-weight:600; font-size:14px;'>16.03% of Test</span><br><span style='color:#475569; font-size:13px;'>Missed Fraud</span>",
-                "<b>TRUE POSITIVE (TP)</b><br><span style='font-size:20px; font-weight:700; color:#0F172A;'>1,208</span><br><span style='color:#15803D; font-weight:600; font-size:14px;'>16.11% of Test</span><br><span style='color:#475569; font-size:13px;'>Fraud Correctly Flagged</span>"
+                "<b>FALSE NEGATIVE (FN)</b><br><span style='font-size:20px; font-weight:700; color:#0F172A;'>1,202</span><br><span style='color:#BE123C; font-weight:600; font-size:14px;'>16.03% of Test</span><br><span style='color:#475569; font-size:13px;'>Missed Fraud</span>",
+                "<b>TRUE POSITIVE (TP)</b><br><span style='font-size:20px; font-weight:700; color:#0F172A;'>1,208</span><br><span style='color:#2563EB; font-weight:600; font-size:14px;'>16.11% of Test</span><br><span style='color:#475569; font-size:13px;'>Fraud Correctly Flagged</span>"
             ]
         ]
         cm_scale = [[0, "#F0F9FF"], [0.35, "#BAE6FD"], [0.7, "#38BDF8"], [1, "#0284C7"]]
@@ -1914,10 +1915,10 @@ elif selected_nav == "🏆 Model Performance & Audit":
         """, unsafe_allow_html=True)
     with s_col3:
         st.markdown(f"""
-        <div class="app-kpi-card kpi-legit">
+        <div class="app-kpi-card">
             <div class="app-kpi-label">EST. SENSITIVITY</div>
             <div class="app-kpi-val">{est_recall:.1f}%</div>
-            <div class="app-kpi-footer"><span class="app-tag-legit">Fraud captured</span></div>
+            <div class="app-kpi-footer"><span class="app-tag-accent">Fraud captured</span></div>
         </div>
         """, unsafe_allow_html=True)
     with s_col4:
